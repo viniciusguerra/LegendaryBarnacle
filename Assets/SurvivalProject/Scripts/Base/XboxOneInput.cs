@@ -67,6 +67,8 @@ public enum XboxOneAxis
 
 public static class XboxOneInput
 {
+    private static XboxOneAxis[] axisToFlip = { XboxOneAxis.LeftThumbY, XboxOneAxis.RightThumbY };
+
     public static bool GetButton(XboxOneButton button)
     {
         string playerPrefix = "p1_";
@@ -80,7 +82,7 @@ public static class XboxOneInput
         string playerPrefix = "p1_";
         string buttonName = playerPrefix + button.GetDescription();
 
-        return Input.GetAxis(buttonName);
+        return Input.GetAxis(buttonName) * (System.Array.Exists(axisToFlip, x => x == button) ? -1 : 1);
     }
 
     public static bool GetButton(int player, XboxOneButton button)

@@ -13,7 +13,13 @@ public class MainCamera : Singleton<MainCamera>
 
     public float cameraFollowSpeed = 1;
     public float setTransformTime = 1.5f;
-    public float horizontalOffset;
+
+    private new Camera camera;
+    public Camera Camera
+    {
+        get
+        { return camera; }
+    }
 
     Vector3 targetPosition;
     Vector3 positionDelta;
@@ -67,5 +73,7 @@ public class MainCamera : Singleton<MainCamera>
     {
         transform.position = target.position + relativePosition;
         transform.rotation = Quaternion.Euler(relativeRotation);
+
+        camera = GetComponent<Camera>();
     }
 }
