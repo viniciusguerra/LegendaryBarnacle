@@ -14,6 +14,8 @@ public class MainCamera : Singleton<MainCamera>
     public float cameraFollowSpeed = 1;
     public float setTransformTime = 1.5f;
 
+    public float offsetMultiplier = 2;
+
     private new Camera camera;
     public Camera Camera
     {
@@ -24,6 +26,7 @@ public class MainCamera : Singleton<MainCamera>
     Vector3 targetPosition;
     Vector3 positionDelta;
     Vector3 positionStep;
+    Vector3 cameraOffset;
 
     private void FollowTarget()
     {        
@@ -45,6 +48,11 @@ public class MainCamera : Singleton<MainCamera>
         iTween.RotateTo(gameObject, iTween.Hash("name", GetInstanceID() + "Rotation", "rotation", targetTransform, "time", setTransformTime));        
     }
 
+    public void SetOffset(Vector3 offset)
+    { 
+        cameraOffset = offset * offsetMultiplier;
+    }
+
     public void ResetTransform()
     {
         iTween.StopByName(GetInstanceID() + "Position");
@@ -61,12 +69,14 @@ public class MainCamera : Singleton<MainCamera>
 
     void LateUpdate()
     {
-        targetPosition = target.position + relativePosition;
+        targetPosition = target.position + relativePosition + cameraOffset;
         positionDelta = (targetPosition - transform.position) * Time.deltaTime * cameraFollowSpeed;
         positionStep = transform.position + positionDelta;
 
+        cameraOffset = Vector3.zero;
+
         if (follow)
-            FollowTarget();
+            FollowTarget();        
     }
 
     void Start()

@@ -77,15 +77,15 @@ public static class XboxOneInput
         return Input.GetButton(buttonName);
     }
 
-    public static float GetAxis(XboxOneAxis button)
+    public static float GetAxis(XboxOneAxis axis)
     {
         string playerPrefix = "p1_";
-        string buttonName = playerPrefix + button.GetDescription();
+        string buttonName = playerPrefix + axis.GetDescription();
 
-        return Input.GetAxis(buttonName) * (System.Array.Exists(axisToFlip, x => x == button) ? -1 : 1);
+        return Input.GetAxis(buttonName) * (System.Array.Exists(axisToFlip, x => x == axis) ? -1 : 1);
     }
 
-    public static bool GetButton(int player, XboxOneButton button)
+    public static bool GetButton(XboxOneButton button, int player)
     {
         string playerPrefix = "p" + player + "_";
         string buttonName = playerPrefix + button.GetDescription();
@@ -93,10 +93,10 @@ public static class XboxOneInput
         return Input.GetButton(buttonName);
     }
 
-    public static float GetAxis(int player, XboxOneAxis button)
+    public static float GetAxis(XboxOneAxis axis, int player)
     {
         string playerPrefix = "p" + player + "_";
-        string buttonName = playerPrefix + button.GetDescription();
+        string buttonName = playerPrefix + axis.GetDescription();
 
         return Input.GetAxis(buttonName);
     }
