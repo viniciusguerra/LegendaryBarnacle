@@ -12,12 +12,12 @@ public class Crosshair : MonoBehaviour
     private Vector3 playerRelativePosition;
 
     [SerializeField]
-    private Player player;
+    private PlayerInput character;
     private bool releasedInput;
 
     public void Show()
     {
-        playerRelativePosition = player.transform.TransformPoint(Vector3.forward * initialDistance);
+        playerRelativePosition = character.transform.TransformPoint(Vector3.forward * initialDistance);
         transform.position = playerRelativePosition;
 
         iTween.FadeTo(gameObject, 1, fadeTime);
