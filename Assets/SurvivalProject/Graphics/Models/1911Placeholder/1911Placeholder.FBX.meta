@@ -49,10 +49,10 @@ ModelImporter:
     4300014: bullet
     7400000: SlideForth
     7400002: SlideBack
-    7400004: HammerBack
-    7400006: HammerForth
-    7400008: SafetyOn
-    7400010: SafetyOff
+    7400004: HammerForth
+    7400006: HammerBack
+    7400008: SafetyOff
+    7400010: SafetyOn
     7400012: MagRelease
     7400014: TriggerPull
     9500000: //RootNode
@@ -87,7 +87,7 @@ ModelImporter:
       level: 0
       cycleOffset: 0
       loop: 0
-      hasAdditiveReferencePose: 0
+      hasAdditiveReferencePose: 1
       loopTime: 0
       loopBlend: 0
       loopBlendOrientation: 0
@@ -133,53 +133,7 @@ ModelImporter:
       level: 0
       cycleOffset: 0
       loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask:
-      - path: 
-        weight: 1
-      - path: barrel
-        weight: 1
-      - path: bullet
-        weight: 1
-      - path: frame
-        weight: 1
-      - path: hammer
-        weight: 1
-      - path: magrelease
-        weight: 1
-      - path: safety
-        weight: 1
-      - path: slide
-        weight: 1
-      - path: trigger
-        weight: 1
-      maskType: 0
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
-    - serializedVersion: 16
-      name: HammerBack
-      takeName: Take 001
-      firstFrame: 4
-      lastFrame: 6
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
+      hasAdditiveReferencePose: 1
       loopTime: 0
       loopBlend: 0
       loopBlendOrientation: 0
@@ -218,14 +172,14 @@ ModelImporter:
     - serializedVersion: 16
       name: HammerForth
       takeName: Take 001
-      firstFrame: 6
-      lastFrame: 8
+      firstFrame: 4
+      lastFrame: 6
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
-      hasAdditiveReferencePose: 0
+      hasAdditiveReferencePose: 1
       loopTime: 0
       loopBlend: 0
       loopBlendOrientation: 0
@@ -262,16 +216,16 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: SafetyOn
+      name: HammerBack
       takeName: Take 001
-      firstFrame: 8
-      lastFrame: 15
+      firstFrame: 6
+      lastFrame: 8
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
-      hasAdditiveReferencePose: 0
+      hasAdditiveReferencePose: 1
       loopTime: 0
       loopBlend: 0
       loopBlendOrientation: 0
@@ -310,6 +264,52 @@ ModelImporter:
     - serializedVersion: 16
       name: SafetyOff
       takeName: Take 001
+      firstFrame: 8
+      lastFrame: 15
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 1
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: barrel
+        weight: 1
+      - path: bullet
+        weight: 1
+      - path: frame
+        weight: 1
+      - path: hammer
+        weight: 1
+      - path: magrelease
+        weight: 1
+      - path: safety
+        weight: 1
+      - path: slide
+        weight: 1
+      - path: trigger
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: SafetyOn
+      takeName: Take 001
       firstFrame: 15
       lastFrame: 22
       wrapMode: 0
@@ -317,7 +317,7 @@ ModelImporter:
       level: 0
       cycleOffset: 0
       loop: 0
-      hasAdditiveReferencePose: 0
+      hasAdditiveReferencePose: 1
       loopTime: 0
       loopBlend: 0
       loopBlendOrientation: 0

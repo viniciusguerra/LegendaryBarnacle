@@ -59,11 +59,38 @@ public class PlayerInput : CharacterInput
             Vector3 lookDirection = new Vector3(crosshair.transform.position.x, transform.position.y, crosshair.transform.position.z);
             transform.LookAt(lookDirection);
 
+            //toggle safety
+            if(XboxOneInput.GetButtonDown(XboxOneButton.B))
+            {
+                Character.EquippedFirearm.ToggleSafety();
+            }
+
+            //toggle hammer
+            if(XboxOneInput.GetButtonDown(XboxOneButton.RB))
+            {
+                Character.EquippedFirearm.Cock();
+            }
+
+            //pull slide
+            //will release ammo from chamber if loaded
+            if (XboxOneInput.GetButtonDown(XboxOneButton.Y))
+            {
+                Character.EquippedFirearm.PullSlide();
+            }
+
+            //release slide
+            //will load chamber if magazine is loaded
+            if (XboxOneInput.GetButtonUp(XboxOneButton.Y))
+            {
+                Character.EquippedFirearm.ReleaseSlide();
+            }
+
+            //shoots when pressing RT
             if (XboxOneInput.GetAxis(XboxOneAxis.RT) > 0)
             {
                 if (!holdingTrigger)
                 {
-                    Character.EquippedFirearm.Controller.PullTrigger();
+                    Character.EquippedFirearm.PullTrigger();
                     holdingTrigger = true;
                 }
             }

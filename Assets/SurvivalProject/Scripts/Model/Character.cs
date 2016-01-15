@@ -20,8 +20,16 @@ public class Character : MonoBehaviour
     private CharacterInput characterInput;
     public CharacterInput CharacterInput { get { return characterInput; } }
 
+    private Health health;
+
+    public Health Health
+    {
+        get { return health; }
+    }
+
     void Start()
     {
         characterInput = GetComponent<CharacterInput>();
+        health = GetComponent<Health>();
     }
 }

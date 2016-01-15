@@ -69,6 +69,22 @@ public static class XboxOneInput
 {
     private static XboxOneAxis[] axisToFlip = { XboxOneAxis.LeftThumbY, XboxOneAxis.RightThumbY };
 
+    public static bool GetButtonDown(XboxOneButton button)
+    {
+        string playerPrefix = "p1_";
+        string buttonName = playerPrefix + button.GetDescription();
+
+        return Input.GetButtonDown(buttonName);
+    }
+
+    public static bool GetButtonUp(XboxOneButton button)
+    {
+        string playerPrefix = "p1_";
+        string buttonName = playerPrefix + button.GetDescription();
+
+        return Input.GetButtonUp(buttonName);
+    }
+
     public static bool GetButton(XboxOneButton button)
     {
         string playerPrefix = "p1_";
@@ -83,6 +99,22 @@ public static class XboxOneInput
         string buttonName = playerPrefix + axis.GetDescription();
 
         return Input.GetAxis(buttonName) * (System.Array.Exists(axisToFlip, x => x == axis) ? -1 : 1);
+    }
+
+    public static bool GetButtonDown(XboxOneButton button, int player)
+    {
+        string playerPrefix = "p" + player + "_";
+        string buttonName = playerPrefix + button.GetDescription();
+
+        return Input.GetButtonDown(buttonName);
+    }
+
+    public static bool GetButtonUp(XboxOneButton button, int player)
+    {
+        string playerPrefix = "p" + player + "_";
+        string buttonName = playerPrefix + button.GetDescription();
+
+        return Input.GetButtonUp(buttonName);
     }
 
     public static bool GetButton(XboxOneButton button, int player)
