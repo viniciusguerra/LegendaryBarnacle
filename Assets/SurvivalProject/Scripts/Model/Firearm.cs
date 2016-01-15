@@ -25,13 +25,17 @@ public class Firearm : MonoBehaviour
     private string a_safety = "ToggleSafety";
     private string a_slide = "ToggleSlide";
     private string a_hasAmmo = "HasAmmoInChamber";
-    private string a_safetyOn = "SafetyOn";    
+    private string a_safetyOn = "SafetyOn";
+    private string a_slideBack = "SlideBack";
 
     public void ToggleSafety()
     {
-        safetyOn = !safetyOn;
-        animator.SetTrigger(a_safety);
-        animator.SetBool(a_safetyOn, safetyOn);
+        if (!slideBack)
+        {
+            safetyOn = !safetyOn;
+            animator.SetTrigger(a_safety);
+            animator.SetBool(a_safetyOn, safetyOn);
+        }
     }
 
     public void Cock()
@@ -54,9 +58,10 @@ public class Firearm : MonoBehaviour
     {
         if(!safetyOn && !slideBack)
         {
-            animator.SetTrigger(a_slide);
+            //animator.SetTrigger(a_slide);            
             slideBack = true;
-            
+            animator.SetBool(a_slideBack, slideBack);
+
             SetHammerCocked(true);
 
             if (chamberedAmmo != null)
@@ -68,8 +73,9 @@ public class Firearm : MonoBehaviour
     {
         if (slideBack)
         {
-            animator.SetTrigger(a_slide);
+            //animator.SetTrigger(a_slide);            
             slideBack = false;
+            animator.SetBool(a_slideBack, slideBack);
 
             LoadChamber();
         }
@@ -132,9 +138,7 @@ public class Firearm : MonoBehaviour
 
         DrawTrail(trailDirection);
 
-        ReleaseChamberedRound();
-
-        LoadChamber();        
+        StartCoroutine(SlideOnShoot());
     }
 
     private void DrawTrail(Vector3 direction)
@@ -153,6 +157,16 @@ public class Firearm : MonoBehaviour
         trailRenderer.transform.parent = transform;
         trailRenderer.Clear();
         trailRenderer.enabled = false;
+    }
+
+    private IEnumerator SlideOnShoot()
+    {
+        PullSlide();
+
+        yield return new WaitForEndOfFrame();
+
+        if (currentMagazine != null && currentMagazine.currentAmmoCount > 0)
+            ReleaseSlide();
     }
 
     void Start()
