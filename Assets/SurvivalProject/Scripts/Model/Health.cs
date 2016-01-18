@@ -1,32 +1,47 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public delegate void HealthEnded();
+
 public class Health : MonoBehaviour
 {
-    [SerializeField]
-    private int currentHP;
+    public event HealthEnded OnHealthEnd;
 
-    public int CurrentHP
+    [SerializeField]
+    private float currentHP;
+
+    public float CurrentHP
     {
         get { return currentHP; }
     }
 
     [SerializeField]
-    private int maxHP;
+    private float maxHP;
 
-    public int MaxHP
+    public float MaxHP
     {
         get { return maxHP; }
         private set { maxHP = value; }
     }
 
-    public void Damage(int value)
-    {
-        currentHP = Mathf.Max(0, currentHP - value);
-    }
+    [SerializeField]
+    private float defence;
 
+    public float Defence
+    {
+        get { return defence; }
+        set { defence = value; }
+    }
     public void Damage(Ammo ammo)
     {
+        float damageValue;
+        float damageReduction = defence;
+        
 
     }
+
+    private void Damage(float value)
+    {
+        currentHP = Mathf.Max(0, currentHP - value);
+    }    
 }

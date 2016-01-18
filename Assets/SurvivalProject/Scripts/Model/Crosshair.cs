@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Crosshair : MonoBehaviour
 {
-    public float initialDistance;    
+    public float minimalDistance;    
 
     public float movementSpeed;
     public float fadeTime;
@@ -17,7 +17,7 @@ public class Crosshair : MonoBehaviour
 
     public void Show()
     {
-        playerRelativePosition = character.transform.TransformPoint(Vector3.forward * initialDistance);
+        playerRelativePosition = character.transform.TransformPoint(Vector3.forward * minimalDistance);
         transform.position = playerRelativePosition;
 
         iTween.FadeTo(gameObject, 1, fadeTime);
@@ -64,8 +64,8 @@ public class Crosshair : MonoBehaviour
 
     void Update()
     {        
-        transform.LookAt(transform.position + MainCamera.Instance.Camera.transform.rotation * Vector3.forward,
-            MainCamera.Instance.Camera.transform.rotation * Vector3.up);
+        transform.LookAt(transform.position + SceneManager.Instance.MainCamera.transform.rotation * Vector3.forward,
+            SceneManager.Instance.MainCamera.transform.rotation * Vector3.up);
 
         if (showing)        
             Control();        

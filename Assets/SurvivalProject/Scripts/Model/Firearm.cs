@@ -1,32 +1,78 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEditor;
 
-public class Firearm : MonoBehaviour
+public class Firearm : Equipment
 {
-    public Ammo chamberedAmmo;
+    [SerializeField]
+    protected Ammo chamberedAmmo;
+    public Ammo ChamberedAmmo
+    {
+        get
+        {
+            return chamberedAmmo;
+        }
+        set
+        {
+            chamberedAmmo = value;            
+            
+            if(value != null)            
+            {
+                chamberedAmmoPrefab = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(AmmoDatabase.ammoPrefabsPath + chamberedAmmo.prefabName + ".prefab"));
+                chamberedAmmoPrefab.transform.position = chamberedAmmoTransform.position;
+                chamberedAmmoPrefab.transform.rotation = chamberedAmmoTransform.rotation;
+                chamberedAmmoPrefab.transform.parent = chamberedAmmoTransform;
+                chamberedAmmoPrefab.name = "Chambered " + chamberedAmmo.ammoName;
+            }
+        }
+    }
+
     public Magazine currentMagazine;
     public bool safetyOn;
     public bool cocked;
     public bool slideBack;
 
+    #region Collectible
+    [SerializeField]
+    private string collectibleName;
+    public override string Name
+    {
+        get
+        {
+            return collectibleName;
+        }
+    }
+
+    [SerializeField]
+    private float collectibleWeight;
+    public override float Weight
+    {
+        get
+        {
+            return collectibleWeight;
+        }
+    }
+    #endregion
+
     public Character wielder;
     public Vector3 barrelTip;
-    private Ray aimRay;
-    private RaycastHit rayHitInfo;
+    public Transform chamberedAmmoTransform;
+    public GameObject chamberedAmmoPrefab;
+    protected Ray aimRay;
+    protected RaycastHit rayHitInfo;
 
     [SerializeField]
-    private Animator animator;
+    protected Animator animator;
     [SerializeField]
-    private TrailRenderer trailRenderer;
+    protected TrailRenderer trailRenderer;
 
-    private string a_trigger = "TriggerPull";
-    private string a_magRelease = "MagRelease";
-    private string a_cock = "ToggleHammer";
-    private string a_safety = "ToggleSafety";
-    private string a_slide = "ToggleSlide";
-    private string a_hasAmmo = "HasAmmoInChamber";
-    private string a_safetyOn = "SafetyOn";
-    private string a_slideBack = "SlideBack";
+    protected string a_trigger = "TriggerPull";
+    protected string a_magRelease = "MagRelease";
+    protected string a_cock = "ToggleHammer";
+    protected string a_safety = "ToggleSafety";
+    protected string a_hasAmmo = "HasAmmoInChamber";
+    protected string a_safetyOn = "SafetyOn";
+    protected string a_slideBack = "SlideBack";
 
     public void ToggleSafety()
     {
@@ -51,20 +97,31 @@ public class Firearm : MonoBehaviour
 
     public void ReleaseChamberedRound()
     {
-        chamberedAmmo = null;
+        if (chamberedAmmoPrefab != null)
+        {
+            chamberedAmmoPrefab.name = "Released " + chamberedAmmo.ammoName;
+
+            ChamberedAmmo = null;
+
+            chamberedAmmoPrefab.transform.parent = null;
+            Rigidbody roundRigidbody = chamberedAmmoPrefab.GetComponent<Rigidbody>();
+            roundRigidbody.isKinematic = false;
+            roundRigidbody.AddForce(new Vector3(1, 1.4f, 0) * 2, ForceMode.Impulse);
+
+            chamberedAmmoPrefab = null;
+        }
     }
 
     public void PullSlide()
     {
         if(!safetyOn && !slideBack)
         {
-            //animator.SetTrigger(a_slide);            
             slideBack = true;
             animator.SetBool(a_slideBack, slideBack);
 
             SetHammerCocked(true);
 
-            if (chamberedAmmo != null)
+            if (ChamberedAmmo != null)
                 ReleaseChamberedRound();
         }
     }
@@ -73,7 +130,6 @@ public class Firearm : MonoBehaviour
     {
         if (slideBack)
         {
-            //animator.SetTrigger(a_slide);            
             slideBack = false;
             animator.SetBool(a_slideBack, slideBack);
 
@@ -86,8 +142,8 @@ public class Firearm : MonoBehaviour
         if (currentMagazine == null)
             return;
             
-        currentMagazine.Feed(out chamberedAmmo);
-        animator.SetBool(a_hasAmmo, chamberedAmmo == null ? false : true);
+        ChamberedAmmo = currentMagazine.Feed();
+        animator.SetBool(a_hasAmmo, ChamberedAmmo == null ? false : true);
     }
 
     public void SetHammerCocked(bool cocked)
@@ -107,7 +163,7 @@ public class Firearm : MonoBehaviour
             {
                 if (!slideBack)
                 {
-                    if (chamberedAmmo != null)
+                    if (ChamberedAmmo != null)
                     {
                         animator.SetTrigger(a_trigger);
                         Shoot();
@@ -132,7 +188,7 @@ public class Firearm : MonoBehaviour
 
             if (hitObject != null)
             {
-                hitObject.Damage(chamberedAmmo);
+                hitObject.Damage(ChamberedAmmo);
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Collections;
+using System.Xml;
 
 namespace Base
 {
@@ -31,15 +32,5 @@ namespace Base
             EditorUtility.FocusProjectWindow();
             Selection.activeObject = asset;
         }
-    }
-
-    public class AmmoCreator : Editor
-    {
-        [MenuItem("Assets/Create/Ammo")]
-        public static void CreateAsset()
-        {
-            ScriptableObjectUtility.CreateAsset<Ammo>();
-        }
-
     }
 }

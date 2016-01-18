@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class MainCamera : Singleton<MainCamera>
+public class CustomCamera : MonoBehaviour
 {
     public const int outlineLayer = 8;
 
@@ -10,6 +10,7 @@ public class MainCamera : Singleton<MainCamera>
 
     public Vector3 relativePosition;
     public Vector3 relativeRotation;
+    public Vector3 rotationFollow;
 
     public float cameraFollowSpeed = 1;
     public float setTransformTime = 1.5f;
@@ -29,9 +30,9 @@ public class MainCamera : Singleton<MainCamera>
     Vector3 cameraOffset;
 
     private void FollowTarget()
-    {        
-        if(transform.position != targetPosition)
-            transform.position = positionStep;
+    {
+        if (transform.position != targetPosition)
+            transform.position = positionStep;        
 
         transform.rotation = Quaternion.Euler(relativeRotation);
     }
@@ -45,11 +46,11 @@ public class MainCamera : Singleton<MainCamera>
         follow = false;
 
         iTween.MoveTo(gameObject, iTween.Hash("name", GetInstanceID() + "Position", "position", targetTransform.position, "time", setTransformTime));
-        iTween.RotateTo(gameObject, iTween.Hash("name", GetInstanceID() + "Rotation", "rotation", targetTransform, "time", setTransformTime));        
+        iTween.RotateTo(gameObject, iTween.Hash("name", GetInstanceID() + "Rotation", "rotation", targetTransform, "time", setTransformTime));
     }
 
     public void SetOffset(Vector3 offset)
-    { 
+    {
         cameraOffset = offset * offsetMultiplier;
     }
 
@@ -76,7 +77,7 @@ public class MainCamera : Singleton<MainCamera>
         cameraOffset = Vector3.zero;
 
         if (follow)
-            FollowTarget();        
+            FollowTarget();
     }
 
     void Start()

@@ -1,22 +1,22 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
+using System.Xml;
+using System.Xml.Serialization;
 
-public enum AmmoCaliber
-{    
-    _38,
-    _9mm,
-    _45acp,
-}
-
-public enum AmmoTip
+[Serializable]
+public class Ammo
 {
-    FullMetalJacket,
-    HollowPoint,
-    Piercing
-}
-
-public class Ammo : ScriptableObject
-{
-    public AmmoCaliber caliber;
-    public AmmoTip tip;
+    [XmlAttribute("Name")]
+    public string ammoName;
+    [XmlElement("Caliber")]
+    public string caliber;
+    [XmlElement("Tip")]
+    public string tip;
+    [XmlElement("Damage", typeof(float))]
+    public float damage;
+    [XmlElement("Penetration", typeof(float))]
+    public float penetration;
+    [XmlElement("Prefab")]
+    public string prefabName;    
 }

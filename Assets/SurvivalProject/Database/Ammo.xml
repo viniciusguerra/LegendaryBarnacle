@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AmmoCollection>
+	<AmmoArray>
+		<Ammo Name=".45 Full Metal Jacket">
+			<Caliber>.45</Caliber>
+			<Tip>Full Metal Jacket</Tip>
+			<Damage>75</Damage>
+			<Penetration>5</Penetration>
+			<Prefab>45Bullet</Prefab>
+		</Ammo>
+		<Ammo Name=".45 Hollow Point">
+			<Caliber>.45</Caliber>
+			<Tip>Hollow Point</Tip>
+			<Damage>90.0</Damage>
+			<Penetration>0.0</Penetration>
+			<Prefab>45Bullet</Prefab>
+		</Ammo>
+		<Ammo Name=".45 Armor Piercing">
+			<Caliber>.45</Caliber>
+			<Tip>Armor Piercing</Tip>
+			<Damage>70.0</Damage>
+			<Penetration>15.0</Penetration>
+			<Prefab>45Bullet</Prefab>
+		</Ammo>
+	</AmmoArray>
+</AmmoCollection>
