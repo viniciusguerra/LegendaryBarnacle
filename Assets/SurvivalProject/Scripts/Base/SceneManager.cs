@@ -8,6 +8,9 @@ public class SceneManager : Singleton<SceneManager>
     [SerializeField]
     private Camera weaponCamera;
     public float weaponCameraTranslateTime = 0.5f;
+    [SerializeField]
+    private GameObject collectiblePrefab;
+    public GameObject CollectiblePrefab { get { return collectiblePrefab; } }
 
     public CustomCamera MainCamera
     {

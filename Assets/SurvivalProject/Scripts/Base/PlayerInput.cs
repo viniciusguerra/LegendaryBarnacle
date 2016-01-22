@@ -64,7 +64,7 @@ public class PlayerInput : CharacterInput
             {
                 if (character.WieldedFirearm != null)
                 {
-                    UIController.Instance.SetWeaponCamera(true);
+                    UIController.Instance.HUD.SetWeaponCamera(true);
                     operationEnabled = true;
 
                     drawing = false;
@@ -76,7 +76,7 @@ public class PlayerInput : CharacterInput
         {
             if (enabledCrosshair)
             {
-                UIController.Instance.SetWeaponCamera(false);
+                UIController.Instance.HUD.SetWeaponCamera(false);
                 operationEnabled = false;
                 crosshair.Hide();
                 SetMovementState(MovementState.Running);                
@@ -173,6 +173,11 @@ public class PlayerInput : CharacterInput
         }
     }
 
+    public void HandleCharacterMenuInput()
+    {
+
+    }
+
     protected override void Start()
     {
         base.Start();
@@ -182,8 +187,18 @@ public class PlayerInput : CharacterInput
 
     void Update()
     {
-        HandleMovement();
-        HandleAim();
-        HandleOperation();
+        if (!UIController.Instance.CharacterMenu.IsVisible)
+        {
+            HandleMovement();
+            HandleAim();
+            HandleOperation();
+        }
+        else
+        {
+            HandleCharacterMenuInput();
+        }
+
+        if (XboxOneInput.GetButtonUp(XboxOneButton.Menu))
+            UIController.Instance.CharacterMenu.Toggle();
     }
 }

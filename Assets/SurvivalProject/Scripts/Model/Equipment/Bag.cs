@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 using System;
 
 [SerializeField]
@@ -13,7 +14,12 @@ public class Bag : Equipment
     private float currentWeight;
     public float CurrentWeight { get { return currentWeight; } }
 
+    [SerializeField]
     private Dictionary<ICollectible, int> storedItems;
+    public KeyValuePair<ICollectible, int>[] StoredItems
+    {
+        get { return storedItems.ToArray(); }
+    }
 
     #region Collectible
     [SerializeField]
@@ -116,6 +122,9 @@ public class Bag : Equipment
             amountToRetrieve = 0;
         }
 
+        if (storedItems[collectible] == 0)
+            storedItems.Remove(collectible);
+
         currentWeight -= collectible.Weight * amountToRetrieve;
         return amountToRetrieve;
     }
@@ -124,7 +133,7 @@ public class Bag : Equipment
     {
         int amountToDiscard = Retrieve(collectible, amount);
 
-        Collectible.CreateCollectible(collectible, amountToDiscard, transform.position + transform.forward);
+        Collectible.CreateCollectible(collectible, amountToDiscard, SceneManager.Instance.CollectiblePrefab, transform.position + transform.forward);
     }
 
     void Start()

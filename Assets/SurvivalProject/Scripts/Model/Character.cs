@@ -4,15 +4,6 @@ using System.Collections;
 
 public class Character : MonoBehaviour
 {
-    #region Health
-    private Health health;
-
-    public Health Health
-    {
-        get { return health; }
-    }
-    #endregion
-
     #region Equipment
     [SerializeField]
     private Firearm wieldedFirearm;
@@ -26,6 +17,13 @@ public class Character : MonoBehaviour
     public Holster EquippedHolster
     {
         get { return equippedHolster; }
+    }
+
+    [SerializeField]
+    private Vest equippedVest;
+    public Vest EquippedVest
+    {
+        get { return equippedVest; }
     }
 
     [SerializeField]
@@ -43,6 +41,18 @@ public class Character : MonoBehaviour
     }
     #endregion
 
+    [Space(20)]
+
+    #region Health
+    [SerializeField]
+    private Health health;
+    public Health Health
+    {
+        get { return health; }
+    }
+    #endregion
+
+    [SerializeField]
     private CharacterInput characterInput;
     public CharacterInput CharacterInput { get { return characterInput; } }
 
@@ -69,12 +79,21 @@ public class Character : MonoBehaviour
 
                 break;
             }
+            case "Vest":
+            {
+                equipmentToStore = equippedVest;
+                equippedVest = equipment as Vest;
+
+                UpdateTotalDefense();
+
+                break;
+            }
             case "Clothing":
             {
                 equipmentToStore = equippedClothing;
                 equippedClothing = equipment as Clothing;
 
-                Health.Defence = equippedClothing.Defence;
+                UpdateTotalDefense();
 
                 break;
             }
@@ -104,8 +123,20 @@ public class Character : MonoBehaviour
 
             //discards previously equipped item if it can't be stored
             if (leftOverEquipment != null)
-                Collectible.CreateCollectible(leftOverEquipment, 1, transform.position + transform.forward);
+                Collectible.CreateCollectible(leftOverEquipment, 1, SceneManager.Instance.CollectiblePrefab, transform.position + transform.forward);
         }
+    }
+
+    private void UpdateTotalDefense()
+    {
+        float totalDefense = 0;
+
+        totalDefense += equippedVest.Defense;
+        totalDefense += equippedClothing.Defense;        
+
+        Health.TotalDefense = totalDefense;
+
+        return;
     }
 
     public void DrawFromHolster()
@@ -130,7 +161,6 @@ public class Character : MonoBehaviour
 
     void Start()
     {
-        characterInput = GetComponent<CharacterInput>();
-        health = GetComponent<Health>();
+        UpdateTotalDefense();
     }
 }

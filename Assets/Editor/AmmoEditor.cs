@@ -3,36 +3,6 @@ using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 
-//[CustomEditor(typeof(Ammo))]
-//public class AmmoEditor : Editor
-//{
-//    private Ammo targetAmmo;
-//    int selectedAmmoIndex = 0;
-
-//    public override void OnInspectorGUI()
-//    {
-//        base.DrawDefaultInspector();
-
-//        Ammo[] ammoList = AmmoDatabase.Load().ammoList.ToArray();
-//        string[] ammoNames = new string[ammoList.Length + 1];
-
-//        for (int i = 1; i < ammoNames.Length; i++)
-//        {
-//            ammoNames[i] = ammoList[i - 1].ammoName;
-//        }
-
-//        selectedAmmoIndex = EditorGUILayout.Popup(selectedAmmoIndex, ammoNames);
-
-//        if (selectedAmmoIndex > 0)
-//            targetAmmo = ammoList[selectedAmmoIndex - 1];
-//    }
-
-//    void Awake()
-//    {
-//        //targetAmmo = target as Ammo;
-//    }
-//}
-
 [CustomPropertyDrawer(typeof(Ammo))]
 public class AmmoDrawer : PropertyDrawer
 {

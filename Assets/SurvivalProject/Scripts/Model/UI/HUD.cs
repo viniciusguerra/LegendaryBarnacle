@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class UIController : Singleton<UIController>
+public class HUD : MonoBehaviour
 {
     public RawImage weaponCamera;
     public float weaponCameraFadeTime = 1f;

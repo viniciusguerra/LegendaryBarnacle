@@ -1,19 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Clothing : Equipment
+public class CollectibleContainer : MonoBehaviour, ICollectible
 {
-    [SerializeField]
-    private float defense;
-    public float Defense
-    {
-        get { return defense; }
-    }
-
     #region Collectible
     [SerializeField]
     private string collectibleName;
-    public override string Name
+    public string Name
     {
         get
         {
@@ -23,7 +16,7 @@ public class Clothing : Equipment
 
     [SerializeField]
     private float collectibleWeight;
-    public override float Weight
+    public float Weight
     {
         get
         {

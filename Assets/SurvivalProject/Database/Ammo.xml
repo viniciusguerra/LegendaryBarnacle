@@ -22,5 +22,12 @@
 			<Penetration>15.0</Penetration>
 			<Prefab>45Bullet</Prefab>
 		</Ammo>
+    <Ammo Name=".380 ARX">
+			<Caliber>.380</Caliber>
+			<Tip>ARX</Tip>
+			<Damage>80.0</Damage>
+			<Penetration>0.0</Penetration>
+			<Prefab>45Bullet</Prefab>
+		</Ammo>
 	</AmmoArray>
 </AmmoCollection>

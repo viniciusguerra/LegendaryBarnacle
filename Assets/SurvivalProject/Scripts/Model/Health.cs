@@ -25,19 +25,21 @@ public class Health : MonoBehaviour
     }
 
     [SerializeField]
-    private float defence;
+    private float totalDefense;
 
-    public float Defence
+    public float TotalDefense
     {
-        get { return defence; }
-        set { defence = value; }
+        get { return totalDefense; }
+        set { totalDefense = value; }
     }
     public void Damage(Ammo ammo)
     {
-        float damageValue;
-        float damageReduction = defence;
-        
+        float damageValue = ammo.damage;
+        float damageReduction = totalDefense - ammo.penetration;
 
+        damageValue -= damageReduction;
+
+        Damage(damageValue);
     }
 
     private void Damage(float value)
