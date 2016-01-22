@@ -2,8 +2,25 @@
 using System.Collections;
 using System;
 
+[Serializable]
 public class Holster : Equipment
 {
+    [SerializeField]
+    private HolsterData holsterData;
+
+    public override ItemData ItemData
+    {
+        get { return holsterData; }
+    }
+
+    public float DrawTime
+    {
+        get
+        {
+            return holsterData.DrawTime;
+        }
+    }
+
     [SerializeField]
     private Firearm equippedFirearm;
     public Firearm EquippedFirearm
@@ -12,39 +29,7 @@ public class Holster : Equipment
         {
             return equippedFirearm;
         }
-    }
-
-    [SerializeField]
-    private float drawTime;
-    public float DrawTime
-    {
-        get
-        {
-            return drawTime;
-        }
-    }
-
-    #region Collectible
-    [SerializeField]
-    private string collectibleName;
-    public override string Name
-    {
-        get
-        {
-            return collectibleName;
-        }
-    }
-
-    [SerializeField]
-    private float collectibleWeight;
-    public override float Weight
-    {
-        get
-        {
-            return collectibleWeight;
-        }
     }    
-    #endregion
 
     public Firearm Store(Firearm firearm)
     {
@@ -57,7 +42,7 @@ public class Holster : Equipment
 
     public Firearm Draw(out float drawTime)
     {
-        drawTime = this.drawTime;
+        drawTime = holsterData.DrawTime;
         return equippedFirearm;
     }
 

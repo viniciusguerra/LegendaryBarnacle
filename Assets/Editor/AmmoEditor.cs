@@ -3,7 +3,7 @@ using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 
-[CustomPropertyDrawer(typeof(Ammo))]
+[CustomPropertyDrawer(typeof(AmmoData))]
 public class AmmoDrawer : PropertyDrawer
 {
     //for database selection popup
@@ -36,11 +36,7 @@ public class AmmoDrawer : PropertyDrawer
 
             var ammoCaliberLabelRect = new Rect(position.x, height, columnWidth * 2, fieldHeight);
             var ammoCaliberValueRect = new Rect(position.x + columnWidth, height, columnWidth, fieldHeight);
-            height += fieldHeight;
-
-            var ammoTipLabelRect = new Rect(position.x, height, columnWidth * 2, fieldHeight);
-            var ammoTipValueRect = new Rect(position.x + columnWidth, height, columnWidth, fieldHeight);
-            height += fieldHeight;
+            height += fieldHeight;            
 
             var ammoDamageLabelRect = new Rect(position.x, height, columnWidth * 2, fieldHeight);
             var ammoDamageValueRect = new Rect(position.x + columnWidth, height, columnWidth, fieldHeight);
@@ -48,6 +44,14 @@ public class AmmoDrawer : PropertyDrawer
 
             var ammoPenetrationLabelRect = new Rect(position.x, height, columnWidth * 2, fieldHeight);
             var ammoPenetrationValueRect = new Rect(position.x + columnWidth, height, columnWidth, fieldHeight);
+            height += fieldHeight;
+
+            var ammoStoppingPowerLabelRect = new Rect(position.x, height, columnWidth * 2, fieldHeight);
+            var ammoStoppingPowerValueRect = new Rect(position.x + columnWidth, height, columnWidth, fieldHeight);
+            height += fieldHeight;
+
+            var ammoWeightLabelRect = new Rect(position.x, height, columnWidth * 2, fieldHeight);
+            var ammoWeightValueRect = new Rect(position.x + columnWidth, height, columnWidth, fieldHeight);
             height += fieldHeight;
 
             var ammoPrefabLabelRect = new Rect(position.x, height, columnWidth * 2, fieldHeight);
@@ -58,7 +62,7 @@ public class AmmoDrawer : PropertyDrawer
             var setButtonRect = new Rect(position.x, height, columnWidth, fieldHeight);
 
             //load ammo types from database
-            Ammo[] ammoTypesFromDatabase = AmmoDatabase.Load().ToArray();
+            AmmoData[] ammoTypesFromDatabase = AmmoDatabase.Load().ToArray();
             string[] ammoNamesFromDatabase = new string[ammoTypesFromDatabase.Length + 1];
             ammoNamesFromDatabase[0] = "No Change";
 
@@ -79,10 +83,11 @@ public class AmmoDrawer : PropertyDrawer
                 {
                     //set current property values to selected database item
                     property.FindPropertyRelative("ammoName").stringValue = ammoTypesFromDatabase[newIndex - 1].ammoName;
-                    property.FindPropertyRelative("caliber").stringValue = ammoTypesFromDatabase[newIndex - 1].caliber;
-                    property.FindPropertyRelative("tip").stringValue = ammoTypesFromDatabase[newIndex - 1].tip;
+                    property.FindPropertyRelative("caliber").stringValue = ammoTypesFromDatabase[newIndex - 1].caliber;                    
                     property.FindPropertyRelative("damage").floatValue = ammoTypesFromDatabase[newIndex - 1].damage;
                     property.FindPropertyRelative("penetration").floatValue = ammoTypesFromDatabase[newIndex - 1].penetration;
+                    property.FindPropertyRelative("stoppingPower").floatValue = ammoTypesFromDatabase[newIndex - 1].stoppingPower;
+                    property.FindPropertyRelative("weight").floatValue = ammoTypesFromDatabase[newIndex - 1].weight;
                     property.FindPropertyRelative("prefabName").stringValue = ammoTypesFromDatabase[newIndex - 1].prefabName;
 
                     setValues = false;
@@ -96,16 +101,19 @@ public class AmmoDrawer : PropertyDrawer
             EditorGUI.LabelField(ammoNameValueRect, property.FindPropertyRelative("ammoName").stringValue, EditorStyles.boldLabel);
 
             EditorGUI.LabelField(ammoCaliberLabelRect, "Caliber: ");
-            EditorGUI.LabelField(ammoCaliberValueRect, property.FindPropertyRelative("caliber").stringValue, EditorStyles.boldLabel);
-
-            EditorGUI.LabelField(ammoTipLabelRect, "Tip: ");
-            EditorGUI.LabelField(ammoTipValueRect, property.FindPropertyRelative("tip").stringValue, EditorStyles.boldLabel);
+            EditorGUI.LabelField(ammoCaliberValueRect, property.FindPropertyRelative("caliber").stringValue, EditorStyles.boldLabel);            
 
             EditorGUI.LabelField(ammoDamageLabelRect, "Damage: ");
             EditorGUI.LabelField(ammoDamageValueRect, property.FindPropertyRelative("damage").floatValue.ToString(), EditorStyles.boldLabel);
 
             EditorGUI.LabelField(ammoPenetrationLabelRect, "Penetration: ");
             EditorGUI.LabelField(ammoPenetrationValueRect, property.FindPropertyRelative("penetration").floatValue.ToString(), EditorStyles.boldLabel);
+
+            EditorGUI.LabelField(ammoStoppingPowerLabelRect, "Stopping Power: ");
+            EditorGUI.LabelField(ammoStoppingPowerValueRect, property.FindPropertyRelative("stoppingPower").floatValue.ToString(), EditorStyles.boldLabel);
+
+            EditorGUI.LabelField(ammoWeightLabelRect, "Weight: ");
+            EditorGUI.LabelField(ammoWeightValueRect, property.FindPropertyRelative("weight").floatValue.ToString(), EditorStyles.boldLabel);
 
             EditorGUI.LabelField(ammoPrefabLabelRect, "Prefab: ");
             EditorGUI.LabelField(ammoPrefabValueRect, AmmoDatabase.ammoPrefabsPath + property.FindPropertyRelative("prefabName").stringValue, EditorStyles.boldLabel);

@@ -11,12 +11,12 @@ public class AmmoDatabase
 {
     [XmlArray("AmmoArray")]
     [XmlArrayItem("Ammo")]
-    public List<Ammo> ammoList = new List<Ammo>();
+    public List<AmmoData> ammoList = new List<AmmoData>();
 
     public static readonly string ammoDatabasePath = "Assets/SurvivalProject/Database/Ammo.xml";
     public static readonly string ammoPrefabsPath = "Assets/SurvivalProject/Prefabs/Ammo/";
 
-    public static List<Ammo> Load()
+    public static List<AmmoData> Load()
     {
         TextAsset xml = AssetDatabase.LoadAssetAtPath<TextAsset>(ammoDatabasePath);
 
@@ -33,7 +33,7 @@ public class AmmoDatabase
 
     public static string[] LoadNames()
     {
-        List<Ammo> ammoInDatabase = Load();
+        List<AmmoData> ammoInDatabase = Load();
         List<string> ammoNamesInDatabase = new List<string>();
 
         ammoInDatabase.ForEach(ammo => ammoNamesInDatabase.Add(ammo.ammoName));
@@ -41,9 +41,9 @@ public class AmmoDatabase
         return ammoNamesInDatabase.ToArray();
     }
 
-    public static Ammo LoadByName(string name)
+    public static AmmoData LoadByName(string name)
     {
-        Ammo ammo = Load().Find(x => x.ammoName == name);
+        AmmoData ammo = Load().Find(x => x.ammoName == name);
 
         if (ammo == null)
         {

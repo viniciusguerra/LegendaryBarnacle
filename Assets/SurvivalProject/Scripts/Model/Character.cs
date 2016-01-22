@@ -123,7 +123,7 @@ public class Character : MonoBehaviour
 
             //discards previously equipped item if it can't be stored
             if (leftOverEquipment != null)
-                Collectible.CreateCollectible(leftOverEquipment, 1, SceneManager.Instance.CollectiblePrefab, transform.position + transform.forward);
+                Collectible.CreateCollectible(leftOverEquipment, SceneManager.Instance.CollectiblePrefab, transform.position + transform.forward);
         }
     }
 
@@ -131,8 +131,8 @@ public class Character : MonoBehaviour
     {
         float totalDefense = 0;
 
-        totalDefense += equippedVest.Defense;
-        totalDefense += equippedClothing.Defense;        
+        totalDefense += ((ClothingData)equippedClothing.ItemData).Defense;
+        totalDefense += ((ClothingData)equippedClothing.ItemData).Defense;
 
         Health.TotalDefense = totalDefense;
 

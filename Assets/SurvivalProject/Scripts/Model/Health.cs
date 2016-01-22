@@ -32,7 +32,7 @@ public class Health : MonoBehaviour
         get { return totalDefense; }
         set { totalDefense = value; }
     }
-    public void Damage(Ammo ammo)
+    public void Damage(AmmoData ammo)
     {
         float damageValue = ammo.damage;
         float damageReduction = totalDefense - ammo.penetration;

@@ -5,18 +5,23 @@ using System.Collections;
 public class BagItem : MonoBehaviour
 {
     public Text itemName;
-    public ICollectible collectible;
+    public ItemContainer item;
 
-    public void Initialize(ICollectible collectible)
+    public void Initialize(ItemContainer itemContainer)
     {
-        this.collectible = collectible;
-        itemName.text = collectible.Name;
+        item = itemContainer;
+        itemName.text = itemContainer.ItemData.ItemName;
     }
 
-    public static void Create(GameObject bagItemPrefab, Transform parent, ICollectible collectible)
+    public void DisplayInfo()
+    {
+        UIController.Instance.CharacterMenu.InfoWindow.DisplayInfo(item);
+    }
+
+    public static void Create(GameObject bagItemPrefab, Transform parent, ItemContainer itemContainer)
     {
         GameObject bagItem = Instantiate(bagItemPrefab);
         bagItem.transform.SetParent(parent, false);
-        bagItem.GetComponent<BagItem>().Initialize(collectible);
+        bagItem.GetComponent<BagItem>().Initialize(itemContainer);
     }
 }

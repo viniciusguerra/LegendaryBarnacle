@@ -23,6 +23,8 @@ public class PlayerInput : CharacterInput
     private Transform weaponCameraOperationTransform;
     [SerializeField]
     private Transform weaponCameraChamberTransform;
+    [SerializeField]
+    private LootArea lootArea;
 
     protected void HandleMovement()
     {
@@ -178,6 +180,18 @@ public class PlayerInput : CharacterInput
 
     }
 
+    public void HandleCharacterUnarmedInput()
+    {
+        if(!operationEnabled && !enabledCrosshair)
+        {
+            if (XboxOneInput.GetButtonDown(XboxOneButton.Y))
+                lootArea.CycleItems();
+
+            if (XboxOneInput.GetButtonDown(XboxOneButton.A))
+                lootArea.StoreSelectedItem();
+        }
+    }
+
     protected override void Start()
     {
         base.Start();
@@ -192,6 +206,7 @@ public class PlayerInput : CharacterInput
             HandleMovement();
             HandleAim();
             HandleOperation();
+            HandleCharacterUnarmedInput();
         }
         else
         {

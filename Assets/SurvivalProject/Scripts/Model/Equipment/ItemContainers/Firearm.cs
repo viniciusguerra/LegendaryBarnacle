@@ -1,12 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEditor;
+using System;
 
+[Serializable]
 public class Firearm : Equipment
 {
     [SerializeField]
-    protected Ammo chamberedAmmo;
-    public Ammo ChamberedAmmo
+    private FirearmData firearmData;
+    public override ItemData ItemData { get { return firearmData; } }
+
+    public string Caliber { get { return firearmData.Caliber; } }
+    public string FirearmType { get { return firearmData.FirearmType; } }
+
+    [SerializeField]
+    protected AmmoData chamberedAmmo;
+    public AmmoData ChamberedAmmo
     {
         get
         {
@@ -14,6 +23,9 @@ public class Firearm : Equipment
         }
         set
         {
+            if (value.caliber != firearmData.Caliber)
+                return;
+
             chamberedAmmo = value;            
             
             if(value != null)            
@@ -31,28 +43,6 @@ public class Firearm : Equipment
     public bool safetyOn;
     public bool cocked;
     public bool slideBack;
-
-    #region Collectible
-    [SerializeField]
-    private string collectibleName;
-    public override string Name
-    {
-        get
-        {
-            return collectibleName;
-        }
-    }
-
-    [SerializeField]
-    private float collectibleWeight;
-    public override float Weight
-    {
-        get
-        {
-            return collectibleWeight;
-        }
-    }
-    #endregion
 
     public Character wielder;
     public Vector3 barrelTip;
@@ -135,6 +125,25 @@ public class Firearm : Equipment
 
             LoadChamber();
         }
+    }
+
+    /// <summary>
+    /// Loads given magazine, if caliber is compatible, and returns the remaining one, if available. If caliber is not compatible, returns the given magazine.
+    /// </summary>
+    /// <param name="magazine">Magazine to be loaded</param>
+    /// <returns>Remaining magazine</returns>
+    public Magazine LoadMagazine(Magazine magazine)
+    {
+        if (((MagazineData)(magazine.ItemData)).Caliber == firearmData.Caliber)
+        {
+            Magazine oldMagazine = currentMagazine;
+
+            currentMagazine = magazine;
+
+            return oldMagazine;
+        }
+        else
+            return magazine;
     }
 
     private void LoadChamber()

@@ -3,30 +3,26 @@
 	<AmmoArray>
 		<Ammo Name=".45 Full Metal Jacket">
 			<Caliber>.45</Caliber>
-			<Tip>Full Metal Jacket</Tip>
-			<Damage>75</Damage>
+			<Damage>70.0</Damage>
 			<Penetration>5</Penetration>
+      <StoppingPower>10</StoppingPower>
+      <Weight>0.15</Weight>
 			<Prefab>45Bullet</Prefab>
 		</Ammo>
 		<Ammo Name=".45 Hollow Point">
 			<Caliber>.45</Caliber>
-			<Tip>Hollow Point</Tip>
-			<Damage>90.0</Damage>
+			<Damage>80.0</Damage>
 			<Penetration>0.0</Penetration>
+      <StoppingPower>30</StoppingPower>
+      <Weight>0.15</Weight>
 			<Prefab>45Bullet</Prefab>
 		</Ammo>
 		<Ammo Name=".45 Armor Piercing">
 			<Caliber>.45</Caliber>
-			<Tip>Armor Piercing</Tip>
-			<Damage>70.0</Damage>
+			<Damage>65.0</Damage>
 			<Penetration>15.0</Penetration>
-			<Prefab>45Bullet</Prefab>
-		</Ammo>
-    <Ammo Name=".380 ARX">
-			<Caliber>.380</Caliber>
-			<Tip>ARX</Tip>
-			<Damage>80.0</Damage>
-			<Penetration>0.0</Penetration>
+      <StoppingPower>5</StoppingPower>
+      <Weight>0.15</Weight>
 			<Prefab>45Bullet</Prefab>
 		</Ammo>
 	</AmmoArray>

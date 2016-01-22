@@ -1,8 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
-public class Clothing : Equipment
+[Serializable]
+public class VestData : ItemData
 {
+    [SerializeField]
+    private int magazineCapacity;
+    public int MagazineCapacity { get { return magazineCapacity; } }
+
     [SerializeField]
     private float defense;
     public float Defense
@@ -12,22 +18,22 @@ public class Clothing : Equipment
 
     #region Collectible
     [SerializeField]
-    private string collectibleName;
-    public override string Name
+    private string itemName;
+    public override string ItemName
     {
         get
         {
-            return collectibleName;
+            return itemName;
         }
     }
 
     [SerializeField]
-    private float collectibleWeight;
+    private float itemWeight;
     public override float Weight
     {
         get
         {
-            return collectibleWeight;
+            return itemWeight;
         }
     }
     #endregion

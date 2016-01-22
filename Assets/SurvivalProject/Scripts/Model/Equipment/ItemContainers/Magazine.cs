@@ -2,26 +2,40 @@
 using System.Collections;
 using System;
 
+[Serializable]
 public class Magazine : Equipment
 {
-    public Ammo currentAmmo;
+    [SerializeField]
+    private MagazineData magazineData;
+
+    public override ItemData ItemData
+    {
+        get { return magazineData; }
+    }
+
+    public string Caliber { get { return magazineData.Caliber; } }
+    public int Capacity { get { return magazineData.Capacity; } }
+
+    public AmmoData currentAmmo;
 
     public int currentAmmoCount;
-    public int maxAmmoCount;
 
-    public int Load(Ammo ammo, int amount)
+    public int Load(AmmoData ammo, int amount)
     {
+        if (ammo.caliber != magazineData.Caliber)
+            return amount;
+
         int previousAmmoCount = currentAmmoCount;
 
         currentAmmo = ammo;
-        currentAmmoCount = Mathf.Min(maxAmmoCount, previousAmmoCount + amount);
+        currentAmmoCount = Mathf.Min(magazineData.Capacity, previousAmmoCount + amount);
 
         return amount - (currentAmmoCount - previousAmmoCount);
     }
 
-    public Ammo Feed()
+    public AmmoData Feed()
     {
-        Ammo ammoToReturn;
+        AmmoData ammoToReturn;
 
         if(currentAmmoCount > 0)
         {
@@ -40,27 +54,5 @@ public class Magazine : Equipment
         }
 
         return ammoToReturn;
-    }
-
-    #region Collectible
-    [SerializeField]
-    private string collectibleName;
-    public override string Name
-    {
-        get
-        {
-            return collectibleName;
-        }
-    }
-
-    [SerializeField]
-    private float collectibleWeight;
-    public override float Weight
-    {
-        get
-        {
-            return collectibleWeight;
-        }
-    }
-    #endregion
+    }    
 }
