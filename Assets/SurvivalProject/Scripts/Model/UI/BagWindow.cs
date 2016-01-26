@@ -10,6 +10,7 @@ public class BagWindow : UIWindow
     [SerializeField]
     private Transform gridTransform;
 
+    [SerializeField]
     private List<BagItem> bagItemList;
 
     public override void Show()
@@ -18,7 +19,7 @@ public class BagWindow : UIWindow
 
         foreach (KeyValuePair<ItemContainer, int> pair in UIController.Instance.CharacterMenu.Character.EquippedBag.StoredItems)
         {
-            BagItem.Create(bagItemPrefab, gridTransform, pair.Key);
+            bagItemList.Add(BagItem.Create(bagItemPrefab, gridTransform, pair.Key));
         }
     }
 

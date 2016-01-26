@@ -163,7 +163,7 @@ public class InfoWindow : UIWindow
         SetInfoObjectsInactive();
 
         ItemStack stack = null;
-        string amount = "1";
+        int amount = 1;
 
         if (item.GetType() == typeof(ItemStack))
             stack = (ItemStack)item;        
@@ -171,11 +171,11 @@ public class InfoWindow : UIWindow
         if (stack != null)
         {
             item = stack.itemContainer;
-            amount = stack.amount.ToString();
+            amount = stack.amount;
         }
 
         itemName.text = item.ItemData.ItemName;
-        itemAmount.text = amount;
+        itemAmount.text = amount > 1 ? "x" + amount.ToString() : string.Empty;
         itemWeight.text = item.ItemData.Weight.ToString();
         //TODO: add description to ItemData
 

@@ -40,10 +40,13 @@ public class LootArea : MonoBehaviour
 
     public void StoreSelectedItem()
     {
-        if (character.EquippedBag.Store(selectedCollectible.Item) == true)
+        if (selectedCollectible != null && character.EquippedBag.Store(selectedCollectible.Item) == true)
         {
-            Destroy(selectedCollectible);
+            selectedCollectible.gameObject.SetActive(false);
+            collectibleList.Remove(selectedCollectible);
             selectedCollectible = null;
+
+            CycleItems();
         }
     }
 

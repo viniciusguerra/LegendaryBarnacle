@@ -18,10 +18,37 @@ public class BagItem : MonoBehaviour
         UIController.Instance.CharacterMenu.InfoWindow.DisplayInfo(item);
     }
 
-    public static void Create(GameObject bagItemPrefab, Transform parent, ItemContainer itemContainer)
+    public void DisplayInfo(bool value)
     {
-        GameObject bagItem = Instantiate(bagItemPrefab);
-        bagItem.transform.SetParent(parent, false);
-        bagItem.GetComponent<BagItem>().Initialize(itemContainer);
+        if(value)
+        {
+            DisplayInfo();
+        }
+    }
+
+    public static BagItem Create(GameObject bagItemPrefab, Transform parent, ItemContainer itemContainer)
+    {
+        GameObject bagItemGameObject = Instantiate(bagItemPrefab);
+        bagItemGameObject.transform.SetParent(parent, false);
+
+        BagItem bagItem = bagItemGameObject.GetComponent<BagItem>();
+        bagItem.Initialize(itemContainer);
+
+        //adds listener for displaying info
+        var button = bagItem.GetComponent<Button>();
+
+        if (button != null)
+        {
+            bagItem.GetComponent<Button>().onClick.AddListener(() => bagItem.DisplayInfo());
+        }
+        else
+        {
+            var toggle = bagItem.GetComponent<Toggle>();
+
+            toggle.onValueChanged.AddListener((value) => bagItem.DisplayInfo(value));
+            toggle.group = UIController.Instance.CharacterMenu.ItemSelectionToggleGroup;
+        }
+
+        return bagItem;        
     }
 }

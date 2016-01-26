@@ -5,6 +5,8 @@ using System;
 public class ItemStack : ItemContainer
 {
     public ItemContainer itemContainer;
+    [SerializeField]
+    private StackData stackData;
 
     public int amount;
 
@@ -12,7 +14,15 @@ public class ItemStack : ItemContainer
     {
         get
         {
-            return itemContainer.ItemData;
+            stackData.SetName(itemContainer.ItemData.ItemName);
+            stackData.SetWeight(itemContainer.ItemData.Weight * amount);
+
+            return stackData;
         }
+    }
+
+    void Awake()
+    {
+        
     }
 }

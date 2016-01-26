@@ -23,19 +23,17 @@ public class Firearm : Equipment
         }
         set
         {
-            if (value.caliber != firearmData.Caliber)
-                return;
-
-            chamberedAmmo = value;            
-            
-            if(value != null)            
+            if (value != null && value.caliber == firearmData.Caliber)
             {
+                chamberedAmmo = value;
                 chamberedAmmoPrefab = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(AmmoDatabase.ammoPrefabsPath + chamberedAmmo.prefabName + ".prefab"));
                 chamberedAmmoPrefab.transform.position = chamberedAmmoTransform.position;
                 chamberedAmmoPrefab.transform.rotation = chamberedAmmoTransform.rotation;
                 chamberedAmmoPrefab.transform.parent = chamberedAmmoTransform;
                 chamberedAmmoPrefab.name = "Chambered " + chamberedAmmo.ammoName;
             }
+            else
+                chamberedAmmo = null;            
         }
     }
 

@@ -34,9 +34,15 @@ public class Bag : Equipment
     /// <returns>True if it was stored</returns>
     public bool Store(ItemContainer itemContainer)
     {
-        if(bagData.MaxWeight <= currentWeight + itemContainer.ItemData.Weight)
+        if(bagData.MaxWeight >= currentWeight + itemContainer.ItemData.Weight)
         {
-            storedItems[itemContainer]++;
+            if (!storedItems.ContainsKey(itemContainer))            
+                storedItems.Add(itemContainer, 1);
+            else
+                storedItems[itemContainer]++;
+
+            itemContainer.transform.parent = transform;
+            ReparentItemContainer(itemContainer);
             currentWeight += itemContainer.ItemData.Weight;
             return true;
         }
@@ -66,10 +72,20 @@ public class Bag : Equipment
             itemsLeft = (int)(weightLeft / itemContainer.ItemData.Weight);
         }
 
-        storedItems[itemContainer] += amount - itemsLeft;
+        if (!storedItems.ContainsKey(itemContainer))
+            storedItems.Add(itemContainer, amount - itemsLeft);
+        else
+            storedItems[itemContainer] += amount - itemsLeft;
+
+        ReparentItemContainer(itemContainer);
         currentWeight += itemContainer.ItemData.Weight * (amount - itemsLeft);
 
         return itemsLeft;
+    }
+
+    private void ReparentItemContainer(ItemContainer value)
+    {
+        value.gameObject.transform.parent = transform;
     }
 
     /// <summary>

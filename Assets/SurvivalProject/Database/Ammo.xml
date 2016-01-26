@@ -6,7 +6,7 @@
 			<Damage>70.0</Damage>
 			<Penetration>5</Penetration>
       <StoppingPower>10</StoppingPower>
-      <Weight>0.15</Weight>
+      <Weight>0.015</Weight>
 			<Prefab>45Bullet</Prefab>
 		</Ammo>
 		<Ammo Name=".45 Hollow Point">
@@ -14,7 +14,7 @@
 			<Damage>80.0</Damage>
 			<Penetration>0.0</Penetration>
       <StoppingPower>30</StoppingPower>
-      <Weight>0.15</Weight>
+      <Weight>0.015</Weight>
 			<Prefab>45Bullet</Prefab>
 		</Ammo>
 		<Ammo Name=".45 Armor Piercing">
@@ -22,7 +22,7 @@
 			<Damage>65.0</Damage>
 			<Penetration>15.0</Penetration>
       <StoppingPower>5</StoppingPower>
-      <Weight>0.15</Weight>
+      <Weight>0.015</Weight>
 			<Prefab>45Bullet</Prefab>
 		</Ammo>
 	</AmmoArray>

@@ -19,17 +19,22 @@ public class AmmoDrawer : PropertyDrawer
         // Draw label
         position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
 
-        // Don't make child fields be indented
-        var indent = EditorGUI.indentLevel;
+        //store original indent levels
+        var initialIndent = EditorGUI.indentLevel;
         EditorGUI.indentLevel = 0;
 
         //define element positions
         float fieldHeight = 16;
         float height = position.y;
-        float columnWidth = 120;
+        float columnWidth = 103;
 
         if (property.serializedObject != null)
         {
+            //initial height for drawing under main label
+            height += fieldHeight;
+            position.x = 0;
+            EditorGUI.indentLevel = 2;
+
             var ammoNameLabelRect = new Rect(position.x, height, columnWidth * 2, fieldHeight);
             var ammoNameValueRect = new Rect(position.x + columnWidth, height, columnWidth, fieldHeight);
             height += fieldHeight;
@@ -97,25 +102,25 @@ public class AmmoDrawer : PropertyDrawer
             }
 
             //draw information        
-            EditorGUI.LabelField(ammoNameLabelRect, "Ammo Name: ");
+            EditorGUI.LabelField(ammoNameLabelRect, "Ammo Name");
             EditorGUI.LabelField(ammoNameValueRect, property.FindPropertyRelative("ammoName").stringValue, EditorStyles.boldLabel);
 
-            EditorGUI.LabelField(ammoCaliberLabelRect, "Caliber: ");
+            EditorGUI.LabelField(ammoCaliberLabelRect, "Caliber");
             EditorGUI.LabelField(ammoCaliberValueRect, property.FindPropertyRelative("caliber").stringValue, EditorStyles.boldLabel);            
 
-            EditorGUI.LabelField(ammoDamageLabelRect, "Damage: ");
+            EditorGUI.LabelField(ammoDamageLabelRect, "Damage");
             EditorGUI.LabelField(ammoDamageValueRect, property.FindPropertyRelative("damage").floatValue.ToString(), EditorStyles.boldLabel);
 
-            EditorGUI.LabelField(ammoPenetrationLabelRect, "Penetration: ");
+            EditorGUI.LabelField(ammoPenetrationLabelRect, "Penetration");
             EditorGUI.LabelField(ammoPenetrationValueRect, property.FindPropertyRelative("penetration").floatValue.ToString(), EditorStyles.boldLabel);
 
-            EditorGUI.LabelField(ammoStoppingPowerLabelRect, "Stopping Power: ");
+            EditorGUI.LabelField(ammoStoppingPowerLabelRect, "Stopping Power");
             EditorGUI.LabelField(ammoStoppingPowerValueRect, property.FindPropertyRelative("stoppingPower").floatValue.ToString(), EditorStyles.boldLabel);
 
-            EditorGUI.LabelField(ammoWeightLabelRect, "Weight: ");
+            EditorGUI.LabelField(ammoWeightLabelRect, "Weight");
             EditorGUI.LabelField(ammoWeightValueRect, property.FindPropertyRelative("weight").floatValue.ToString(), EditorStyles.boldLabel);
 
-            EditorGUI.LabelField(ammoPrefabLabelRect, "Prefab: ");
+            EditorGUI.LabelField(ammoPrefabLabelRect, "Prefab");
             EditorGUI.LabelField(ammoPrefabValueRect, AmmoDatabase.ammoPrefabsPath + property.FindPropertyRelative("prefabName").stringValue, EditorStyles.boldLabel);
             //GameObject prefabAtPath = AssetDatabase.LoadAssetAtPath<GameObject>(AmmoDatabase.ammoPrefabsPath + property.FindPropertyRelative("prefabName").stringValue);
             //EditorGUI.ObjectField(ammoPrefabValueRect, prefabAtPath != null ? prefabAtPath : null, typeof(GameObject), false);
@@ -127,14 +132,14 @@ public class AmmoDrawer : PropertyDrawer
         }
 
         // Set indent back to what it was
-        EditorGUI.indentLevel = indent;
+        EditorGUI.indentLevel = initialIndent;
 
         EditorGUI.EndProperty();
     }
 
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
     {
-        float height = 140;
+        float height = 160;
 
         //if (property.objectReferenceValue == null)
         //    height = 40;

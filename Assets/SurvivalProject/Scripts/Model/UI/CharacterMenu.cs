@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class CharacterMenu : UIWindow
 {
@@ -22,6 +23,10 @@ public class CharacterMenu : UIWindow
     [SerializeField]
     private InfoWindow infoWindow;
     public InfoWindow InfoWindow { get { return infoWindow; } }
+
+    [SerializeField]
+    private ToggleGroup itemSelectionToggleGroup;
+    public ToggleGroup ItemSelectionToggleGroup { get { return itemSelectionToggleGroup; } }
 
     public override void Show()
     {

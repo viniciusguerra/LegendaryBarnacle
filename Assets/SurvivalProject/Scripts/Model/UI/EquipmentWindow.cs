@@ -65,6 +65,13 @@ public class EquipmentWindow : UIWindow
         }
     }
 
+    public override void Show()
+    {
+        base.Show();
+
+        firearmToggle.Select();
+    }
+
     public override void Hide()
     {
         base.Hide();
