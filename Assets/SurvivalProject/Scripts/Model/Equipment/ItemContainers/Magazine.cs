@@ -16,36 +16,56 @@ public class Magazine : Equipment
     public string Caliber { get { return magazineData.Caliber; } }
     public int Capacity { get { return magazineData.Capacity; } }
 
-    public AmmoData currentAmmo;
+    public AmmoData CurrentAmmo
+    {
+        get
+        {
+            return magazineData.CurrentAmmo;
+        }
+        set
+        {
+            magazineData.CurrentAmmo = value;
+        }
+    }
 
-    public int currentAmmoCount;
+    public int CurrentAmmoCount
+    {
+        get
+        {
+            return magazineData.CurrentAmmoCount;
+        }
+        set
+        {
+            magazineData.CurrentAmmoCount = value;
+        }
+    }
 
     public int Load(AmmoData ammo, int amount)
     {
         if (ammo.caliber != magazineData.Caliber)
             return amount;
 
-        int previousAmmoCount = currentAmmoCount;
+        int previousAmmoCount = CurrentAmmoCount;
 
-        currentAmmo = ammo;
-        currentAmmoCount = Mathf.Min(magazineData.Capacity, previousAmmoCount + amount);
+        CurrentAmmo = ammo;
+        CurrentAmmoCount = Mathf.Min(magazineData.Capacity, previousAmmoCount + amount);
 
-        return amount - (currentAmmoCount - previousAmmoCount);
+        return amount - (CurrentAmmoCount - previousAmmoCount);
     }
 
     public AmmoData Feed()
     {
         AmmoData ammoToReturn;
 
-        if(currentAmmoCount > 0)
+        if(CurrentAmmoCount > 0)
         {
-            ammoToReturn = currentAmmo;
+            ammoToReturn = CurrentAmmo;
 
-            currentAmmoCount--;
+            CurrentAmmoCount--;
 
-            if(currentAmmoCount == 0)
+            if(CurrentAmmoCount == 0)
             {
-                currentAmmo = null;
+                CurrentAmmo = null;
             }            
         }
         else

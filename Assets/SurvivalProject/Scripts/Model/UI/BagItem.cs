@@ -4,18 +4,18 @@ using System.Collections;
 
 public class BagItem : MonoBehaviour
 {
-    public Text itemName;
-    public ItemContainer item;
+    public Text itemNameText;
+    public ItemData itemData;
 
-    public void Initialize(ItemContainer itemContainer)
+    public void Initialize(ItemData itemData)
     {
-        item = itemContainer;
-        itemName.text = itemContainer.ItemData.ItemName;
+        this.itemData = itemData;
+        itemNameText.text = itemData.ItemName;
     }
 
     public void DisplayInfo()
     {
-        UIController.Instance.CharacterMenu.InfoWindow.DisplayInfo(item);
+        UIController.Instance.CharacterMenu.InfoWindow.DisplayInfo(itemData);
     }
 
     public void DisplayInfo(bool value)
@@ -26,13 +26,13 @@ public class BagItem : MonoBehaviour
         }
     }
 
-    public static BagItem Create(GameObject bagItemPrefab, Transform parent, ItemContainer itemContainer)
+    public static BagItem Create(GameObject bagItemPrefab, Transform parent, ItemData itemData)
     {
         GameObject bagItemGameObject = Instantiate(bagItemPrefab);
         bagItemGameObject.transform.SetParent(parent, false);
 
         BagItem bagItem = bagItemGameObject.GetComponent<BagItem>();
-        bagItem.Initialize(itemContainer);
+        bagItem.Initialize(itemData);
 
         //adds listener for displaying info
         var button = bagItem.GetComponent<Button>();

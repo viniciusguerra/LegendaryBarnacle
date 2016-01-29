@@ -17,7 +17,7 @@ public class BagWindow : UIWindow
     {
         base.Show();
 
-        foreach (KeyValuePair<ItemContainer, int> pair in UIController.Instance.CharacterMenu.Character.EquippedBag.StoredItems)
+        foreach (KeyValuePair<ItemData, int> pair in UIController.Instance.CharacterMenu.Character.EquippedBag.StoredItems)
         {
             bagItemList.Add(BagItem.Create(bagItemPrefab, gridTransform, pair.Key));
         }

@@ -119,11 +119,11 @@ public class Character : MonoBehaviour
         //stores any previously equipped items
         if (equipmentToStore != null)
         {
-            leftOverEquipment = equippedBag.Store(equipmentToStore) ? null : equipmentToStore;
+            leftOverEquipment = equippedBag.Store(equipmentToStore.ItemData) ? null : equipmentToStore;
 
             //discards previously equipped item if it can't be stored
             if (leftOverEquipment != null)
-                Collectible.CreateCollectible(leftOverEquipment, SceneManager.Instance.CollectiblePrefab, transform.position + transform.forward);
+                Collectible.CreateCollectible(leftOverEquipment.ItemData, SceneManager.Instance.CollectiblePrefab, transform.position + transform.forward);
         }
     }
 

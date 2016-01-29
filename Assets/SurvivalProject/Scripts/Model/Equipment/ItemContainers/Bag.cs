@@ -16,34 +16,29 @@ public class Bag : Equipment
 
     public float MaxWeight { get { return bagData.MaxWeight; } }
 
-    [SerializeField]
-    private float currentWeight;
-    public float CurrentWeight { get { return currentWeight; } }
+    public float CurrentWeight { get { return bagData.CurrentWeight; } private set { bagData.CurrentWeight = value; } }
 
-    [SerializeField]
-    private Dictionary<ItemContainer, int> storedItems;
-    public KeyValuePair<ItemContainer, int>[] StoredItems
+    public Dictionary<ItemData, int> StoredItems
     {
-        get { return storedItems.ToArray(); }
+        get { return bagData.StoredItems; }
+        private set { bagData.StoredItems = value; }
     }
 
     /// <summary>
     /// Stores a single unit of the given collectible to bag and updates its current weight. Returns if it was stored or not.
     /// </summary>
-    /// <param name="itemContainer">Item to be stored</param>
+    /// <param name="itemData">Item to be stored</param>
     /// <returns>True if it was stored</returns>
-    public bool Store(ItemContainer itemContainer)
+    public bool Store(ItemData itemData)
     {
-        if(bagData.MaxWeight >= currentWeight + itemContainer.ItemData.Weight)
+        if(bagData.MaxWeight >= CurrentWeight + itemData.Weight)
         {
-            if (!storedItems.ContainsKey(itemContainer))            
-                storedItems.Add(itemContainer, 1);
+            if (!StoredItems.ContainsKey(itemData))            
+                StoredItems.Add(itemData, 1);
             else
-                storedItems[itemContainer]++;
+                StoredItems[itemData]++;
 
-            itemContainer.transform.parent = transform;
-            ReparentItemContainer(itemContainer);
-            currentWeight += itemContainer.ItemData.Weight;
+            CurrentWeight += itemData.Weight;
             return true;
         }
         else
@@ -55,50 +50,44 @@ public class Bag : Equipment
     /// <summary>
     /// Stores given amount of the given collectible to bag and updates its current weight. Returns amount of items left over.
     /// </summary>
-    /// <param name="itemContainer">Collectible to be stored</param>
+    /// <param name="itemData">Collectible to be stored</param>
     /// <param name="amount">Amount of units to be stored</param>
     /// <returns>Amount of items left over</returns>
-    public int Store(ItemContainer itemContainer, int amount)
+    public int Store(ItemData itemData, int amount)
     {
         int itemsLeft;        
 
-        float addedWeight = itemContainer.ItemData.Weight * amount;
+        float addedWeight = itemData.Weight * amount;
 
-        if (currentWeight + addedWeight <= bagData.MaxWeight)
+        if (CurrentWeight + addedWeight <= bagData.MaxWeight)
             itemsLeft = 0;
         else
         {
-            float weightLeft = (currentWeight + addedWeight) - bagData.MaxWeight;
-            itemsLeft = (int)(weightLeft / itemContainer.ItemData.Weight);
+            float weightLeft = (CurrentWeight + addedWeight) - bagData.MaxWeight;
+            itemsLeft = (int)(weightLeft / itemData.Weight);
         }
 
-        if (!storedItems.ContainsKey(itemContainer))
-            storedItems.Add(itemContainer, amount - itemsLeft);
+        if (!StoredItems.ContainsKey(itemData))
+            StoredItems.Add(itemData, amount - itemsLeft);
         else
-            storedItems[itemContainer] += amount - itemsLeft;
+            StoredItems[itemData] += amount - itemsLeft;
 
-        ReparentItemContainer(itemContainer);
-        currentWeight += itemContainer.ItemData.Weight * (amount - itemsLeft);
+        CurrentWeight += itemData.Weight * (amount - itemsLeft);
 
         return itemsLeft;
-    }
-
-    private void ReparentItemContainer(ItemContainer value)
-    {
-        value.gameObject.transform.parent = transform;
     }
 
     /// <summary>
     /// Retrieves a single unit of the given collectible and updates current weight.
     /// </summary>
-    /// <param name="itemContainer">Collectible to be retrieved</param>
+    /// <param name="itemData">Collectible to be retrieved</param>
     /// <returns>True if the object was retrieved</returns>
-    public bool Retrieve(ItemContainer itemContainer)
+    public bool Retrieve(ItemData itemData)
     {
         bool contains;
 
-        contains = storedItems.ContainsKey(itemContainer) ? true : false;
-        currentWeight -= contains ? itemContainer.ItemData.Weight : 0;
+        contains = StoredItems.ContainsKey(itemData) ? true : false;
+        CurrentWeight -= contains ? itemData.Weight : 0;
 
         return contains;
     }
@@ -106,30 +95,30 @@ public class Bag : Equipment
     /// <summary>
     /// Retrieves given amount of the given collectible and updates current weight.
     /// </summary>
-    /// <param name="itemContainer">Collectible to be retrieved</param>
+    /// <param name="itemData">Collectible to be retrieved</param>
     /// <param name="amount">Amount of collectibles to be retrieved</param>
     /// <returns>Amount of collectibles retrieved</returns>
-    public int Retrieve(ItemContainer itemContainer, int amount)
+    public int Retrieve(ItemData itemData, int amount)
     {
         int amountToRetrieve;
 
-        if (storedItems.ContainsKey(itemContainer))
+        if (StoredItems.ContainsKey(itemData))
         {
-            amountToRetrieve = storedItems[itemContainer] >= amount ? amount : storedItems[itemContainer];
+            amountToRetrieve = StoredItems[itemData] >= amount ? amount : StoredItems[itemData];
         }
         else
         {
             amountToRetrieve = 0;
         }
 
-        if (storedItems[itemContainer] == 0)
-            storedItems.Remove(itemContainer);
+        if (StoredItems[itemData] == 0)
+            StoredItems.Remove(itemData);
 
-        currentWeight -= itemContainer.ItemData.Weight * amountToRetrieve;
+        CurrentWeight -= itemData.Weight * amountToRetrieve;
         return amountToRetrieve;
     }
 
-    public void Discard(ItemContainer itemData, int amount)
+    public void Discard(ItemData itemData, int amount)
     {
         int amountToDiscard = Retrieve(itemData, amount);
 
@@ -138,7 +127,7 @@ public class Bag : Equipment
 
     void Start()
     {
-        if (storedItems == null)
-            storedItems = new Dictionary<ItemContainer, int>();
+        if (StoredItems == null)
+            StoredItems = new Dictionary<ItemData, int>();
     }
 }

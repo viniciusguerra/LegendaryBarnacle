@@ -7,19 +7,23 @@ public class Collectible : MonoBehaviour
     public static readonly string CollectibleTag = "Collectible";
 
     [SerializeField]
-    private ItemContainer item;
-    public ItemContainer Item { get { return item; } }
+    private ItemContainer itemContainer;
+    public ItemContainer ItemContainer { get { return itemContainer; } }
+    public ItemData ItemData { get { return itemContainer.ItemData; } }
 
-    public void Initialize(ItemContainer item)
+    public void Initialize(ItemData itemData)
     {
-        this.item = item;
+        Type containerType = itemData.ContainerType.GetType();
+        gameObject.AddComponent(containerType);
+
+        itemContainer = GetComponent(containerType) as ItemContainer;
     }
 
-    public static void CreateCollectible(ItemContainer item, GameObject prefab, Vector3 position)
+    public static void CreateCollectible(ItemData itemData, GameObject prefab, Vector3 position)
     {
         GameObject collectibleObject = Instantiate(prefab);
 
         collectibleObject.transform.position = position;
-        collectibleObject.GetComponent<Collectible>().Initialize(item);
+        collectibleObject.GetComponent<Collectible>().Initialize(itemData);
     }
 }

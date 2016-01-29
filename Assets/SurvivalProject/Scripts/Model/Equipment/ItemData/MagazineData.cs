@@ -3,13 +3,22 @@ using System.Collections;
 using System;
 
 [Serializable]
-public class MagazineData : ItemData
+public class MagazineData : ItemData<Magazine>
 {
     [SerializeField]
-    private string caliber;
-    public string Caliber
+    private AmmoData currentAmmo;
+    public AmmoData CurrentAmmo
     {
-        get { return caliber; }
+        get { return currentAmmo; }
+        set { currentAmmo = value; }
+    }
+
+    [SerializeField]
+    private int currentAmmoCount;
+    public int CurrentAmmoCount
+    {
+        get { return currentAmmoCount; }
+        set { currentAmmoCount = value; }
     }
 
     [SerializeField]
@@ -18,6 +27,13 @@ public class MagazineData : ItemData
     {
         get { return capacity; }
     }
+
+    [SerializeField]
+    private string caliber;
+    public string Caliber
+    {
+        get { return caliber; }
+    }    
 
     #region ItemData
     [SerializeField]
@@ -37,6 +53,15 @@ public class MagazineData : ItemData
         get
         {
             return itemWeight;
+        }
+    }
+
+    public override ItemDatabase Database
+    {
+        get
+        {
+            //TODO: Create Magazine Database
+            throw new NotImplementedException();
         }
     }
     #endregion

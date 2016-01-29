@@ -25,18 +25,10 @@ public class Vest : Equipment
 
     public int MagazineCapacity { get { return vestData.MagazineCapacity; } }
 
-    public int MagazineCount { get { return storedMagazines.Count; } }
+    public int MagazineCount { get { return vestData.MagazineCount; } }
 
-    [SerializeField]
-    private Dictionary<Magazine, int> storedMagazines;
     public KeyValuePair<Magazine, int>[] StoredMagazines
     {
-        get { return storedMagazines.ToArray(); }
-    }    
-
-    void Start()
-    {
-        if(storedMagazines == null)
-            storedMagazines = new Dictionary<Magazine, int>();
+        get { return vestData.StoredMagazines; }
     }
 }

@@ -12,40 +12,46 @@ public class Firearm : Equipment
 
     public string Caliber { get { return firearmData.Caliber; } }
     public string FirearmType { get { return firearmData.FirearmType; } }
-
-    [SerializeField]
-    protected AmmoData chamberedAmmo;
+    public Magazine CurrentMagazine
+    {
+        get { return firearmData.CurrentMagazine; }
+        set
+        {
+            if (value != null && value.Caliber == firearmData.Caliber)
+            {
+                firearmData.CurrentMagazine = value;                
+            }
+            else
+                firearmData.CurrentMagazine = null;
+        }
+    }    
     public AmmoData ChamberedAmmo
     {
-        get
-        {
-            return chamberedAmmo;
-        }
+        get { return firearmData.ChamberedAmmo; }
         set
         {
             if (value != null && value.caliber == firearmData.Caliber)
             {
-                chamberedAmmo = value;
-                chamberedAmmoPrefab = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(AmmoDatabase.ammoPrefabsPath + chamberedAmmo.prefabName + ".prefab"));
+                firearmData.ChamberedAmmo = value;
+                chamberedAmmoPrefab = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(ChamberedAmmo.Database.PrefabsPath + ChamberedAmmo.prefabName + ".prefab"));
                 chamberedAmmoPrefab.transform.position = chamberedAmmoTransform.position;
                 chamberedAmmoPrefab.transform.rotation = chamberedAmmoTransform.rotation;
                 chamberedAmmoPrefab.transform.parent = chamberedAmmoTransform;
-                chamberedAmmoPrefab.name = "Chambered " + chamberedAmmo.ammoName;
+                chamberedAmmoPrefab.name = "Chambered " + ChamberedAmmo.ammoName;
             }
             else
-                chamberedAmmo = null;            
+                firearmData.ChamberedAmmo = null;
         }
     }
 
-    public Magazine currentMagazine;
+    protected GameObject chamberedAmmoPrefab;
     public bool safetyOn;
     public bool cocked;
     public bool slideBack;
 
     public Character wielder;
-    public Vector3 barrelTip;
-    public Transform chamberedAmmoTransform;
-    public GameObject chamberedAmmoPrefab;
+    public Transform barrelTipTransform;
+    public Transform chamberedAmmoTransform;    
     protected Ray aimRay;
     protected RaycastHit rayHitInfo;
 
@@ -87,7 +93,7 @@ public class Firearm : Equipment
     {
         if (chamberedAmmoPrefab != null)
         {
-            chamberedAmmoPrefab.name = "Released " + chamberedAmmo.ammoName;
+            chamberedAmmoPrefab.name = "Released " + ChamberedAmmo.ammoName;
 
             ChamberedAmmo = null;
 
@@ -134,9 +140,9 @@ public class Firearm : Equipment
     {
         if (((MagazineData)(magazine.ItemData)).Caliber == firearmData.Caliber)
         {
-            Magazine oldMagazine = currentMagazine;
+            Magazine oldMagazine = CurrentMagazine;
 
-            currentMagazine = magazine;
+            CurrentMagazine = magazine;
 
             return oldMagazine;
         }
@@ -146,10 +152,10 @@ public class Firearm : Equipment
 
     private void LoadChamber()
     {
-        if (currentMagazine == null)
+        if (CurrentMagazine == null)
             return;
             
-        ChamberedAmmo = currentMagazine.Feed();
+        ChamberedAmmo = CurrentMagazine.Feed();
         animator.SetBool(a_hasAmmo, ChamberedAmmo == null ? false : true);
     }
 
@@ -190,7 +196,7 @@ public class Firearm : Equipment
 
         if (rayHitInfo.collider != null)
         {
-            trailDirection = rayHitInfo.point - transform.TransformPoint(barrelTip);
+            trailDirection = rayHitInfo.point - barrelTipTransform.position;
             Health hitObject = rayHitInfo.collider.GetComponent<Health>();
 
             if (hitObject != null)
@@ -206,7 +212,7 @@ public class Firearm : Equipment
 
     private void DrawTrail(Vector3 direction)
     {
-        trailRenderer.transform.position = transform.TransformPoint(barrelTip);
+        trailRenderer.transform.position = barrelTipTransform.position;
         trailRenderer.enabled = true;
         trailRenderer.transform.parent = null;
 
@@ -228,7 +234,7 @@ public class Firearm : Equipment
 
         yield return new WaitForEndOfFrame();
 
-        if (currentMagazine != null && currentMagazine.currentAmmoCount > 0)
+        if (CurrentMagazine != null && CurrentMagazine.CurrentAmmoCount > 0)
             ReleaseSlide();
     }
 
@@ -237,11 +243,20 @@ public class Firearm : Equipment
         aimRay = new Ray();
         trailRenderer.GetComponentInChildren<TrailRenderer>();
         trailRenderer.enabled = false;
+
+        if(ChamberedAmmo != null && chamberedAmmoPrefab == null)
+        {
+            chamberedAmmoPrefab = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(ChamberedAmmo.Database.PrefabsPath + ChamberedAmmo.prefabName + ".prefab"));
+            chamberedAmmoPrefab.transform.position = chamberedAmmoTransform.position;
+            chamberedAmmoPrefab.transform.rotation = chamberedAmmoTransform.rotation;
+            chamberedAmmoPrefab.transform.parent = chamberedAmmoTransform;
+            chamberedAmmoPrefab.name = "Chambered " + ChamberedAmmo.ammoName;
+        }
     }
 
     void Update()
     {
-        aimRay.origin = transform.TransformPoint(barrelTip);
+        aimRay.origin = barrelTipTransform.position;
         aimRay.direction = transform.forward;
 
         Physics.Raycast(aimRay, out rayHitInfo);

@@ -1,19 +1,35 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 [Serializable]
-public class VestData : ItemData
+public class VestData : ItemData<Vest>
 {
     [SerializeField]
     private int magazineCapacity;
     public int MagazineCapacity { get { return magazineCapacity; } }
+    public int MagazineCount { get { return StoredMagazines.Length; } }
 
     [SerializeField]
     private float defense;
     public float Defense
     {
         get { return defense; }
+    }
+
+    [SerializeField]
+    private Dictionary<Magazine, int> storedMagazines;
+    public KeyValuePair<Magazine, int>[] StoredMagazines
+    {
+        get
+        {
+            if (storedMagazines == null)
+                storedMagazines = new Dictionary<Magazine, int>();
+
+            return storedMagazines.ToArray();
+        }
     }
 
     #region Collectible
@@ -34,6 +50,15 @@ public class VestData : ItemData
         get
         {
             return itemWeight;
+        }
+    }
+
+    public override ItemDatabase Database
+    {
+        get
+        {
+            //TODO: Create Vest Database
+            throw new NotImplementedException();
         }
     }
     #endregion
