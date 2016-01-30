@@ -29,18 +29,30 @@ public class LootArea : MonoBehaviour
 
         if (selectedCollectible != null)
         {
-            nextIndex = collectibleList.FindIndex(x => x == selectedCollectible) + 1;
+            if (collectibleList.Exists(x => x == selectedCollectible))
+                nextIndex = collectibleList.FindIndex(x => x == selectedCollectible) + 1;
+            else
+                selectedCollectible = null;
 
             if (nextIndex == collectibleList.Count)
                 nextIndex = 0;
         }
 
-        selectedCollectible = collectibleList[nextIndex];
+        selectedCollectible = collectibleList.Count > 0 ? collectibleList[nextIndex] : null;
     }
 
     public void StoreSelectedItem()
     {
-        if (selectedCollectible != null && character.EquippedBag.Store(selectedCollectible.ItemData) == true)
+        ItemData itemToStore = null;
+
+        if (selectedCollectible != null)
+            itemToStore = selectedCollectible.ItemData;
+        else
+            return;
+
+        bool storeSuccessful = character.EquippedBag.Store(itemToStore);
+
+        if (storeSuccessful == true)
         {
             selectedCollectible.gameObject.SetActive(false);
             collectibleList.Remove(selectedCollectible);

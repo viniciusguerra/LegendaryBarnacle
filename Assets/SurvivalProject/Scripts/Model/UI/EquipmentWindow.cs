@@ -64,12 +64,17 @@ public class EquipmentWindow : UIWindow
             }
         }
     }
+    
+    public void SetDefaultSelection()
+    {
+        firearmToggle.Select();
+    }
 
     public override void Show()
     {
         base.Show();
 
-        firearmToggle.Select();
+        SetDefaultSelection();
     }
 
     public override void Hide()

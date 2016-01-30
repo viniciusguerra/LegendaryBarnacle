@@ -33,7 +33,44 @@ public class MagazineData : ItemData<Magazine>
     public string Caliber
     {
         get { return caliber; }
-    }    
+    }
+
+    //TODO: Load rounds correctly (if changing ammo type, return current amount, etc.)
+    public int Load(AmmoData ammo, int amount)
+    {
+        if (ammo.caliber != Caliber)
+            return amount;
+
+        int previousAmmoCount = CurrentAmmoCount;
+
+        CurrentAmmo = ammo;
+        CurrentAmmoCount = Mathf.Min(Capacity, previousAmmoCount + amount);
+
+        return amount - (CurrentAmmoCount - previousAmmoCount);
+    }
+
+    public AmmoData Feed()
+    {
+        AmmoData ammoToReturn;
+
+        if (CurrentAmmoCount > 0)
+        {
+            ammoToReturn = CurrentAmmo;
+
+            CurrentAmmoCount--;
+
+            if (CurrentAmmoCount == 0)
+            {
+                CurrentAmmo = null;
+            }
+        }
+        else
+        {
+            ammoToReturn = null;
+        }
+
+        return ammoToReturn;
+    }
 
     #region ItemData
     [SerializeField]

@@ -27,7 +27,7 @@ public class Vest : Equipment
 
     public int MagazineCount { get { return vestData.MagazineCount; } }
 
-    public KeyValuePair<Magazine, int>[] StoredMagazines
+    public List<MagazineData> StoredMagazines
     {
         get { return vestData.StoredMagazines; }
     }

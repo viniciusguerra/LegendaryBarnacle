@@ -86,8 +86,17 @@ public class Bag : Equipment
     {
         bool contains;
 
-        contains = StoredItems.ContainsKey(itemData) ? true : false;
-        CurrentWeight -= contains ? itemData.Weight : 0;
+        if (StoredItems.ContainsKey(itemData) && StoredItems[itemData] > 0)
+        {
+            contains = true;
+            CurrentWeight -= itemData.Weight;
+            StoredItems[itemData] -= 1;
+
+            if (StoredItems[itemData] == 0)
+                StoredItems.Remove(itemData);
+        }
+        else
+            contains = false;        
 
         return contains;
     }

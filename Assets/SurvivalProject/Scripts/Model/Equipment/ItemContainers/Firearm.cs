@@ -155,7 +155,7 @@ public class Firearm : Equipment
         if (CurrentMagazine == null)
             return;
             
-        ChamberedAmmo = CurrentMagazine.Feed();
+        ChamberedAmmo = CurrentMagazine.MagazineData.Feed();
         animator.SetBool(a_hasAmmo, ChamberedAmmo == null ? false : true);
     }
 

@@ -10,7 +10,7 @@ public class VestData : ItemData<Vest>
     [SerializeField]
     private int magazineCapacity;
     public int MagazineCapacity { get { return magazineCapacity; } }
-    public int MagazineCount { get { return StoredMagazines.Length; } }
+    public int MagazineCount { get { return StoredMagazines.Count; } }
 
     [SerializeField]
     private float defense;
@@ -20,15 +20,15 @@ public class VestData : ItemData<Vest>
     }
 
     [SerializeField]
-    private Dictionary<Magazine, int> storedMagazines;
-    public KeyValuePair<Magazine, int>[] StoredMagazines
+    private List<MagazineData> storedMagazines;
+    public List<MagazineData> StoredMagazines
     {
         get
         {
             if (storedMagazines == null)
-                storedMagazines = new Dictionary<Magazine, int>();
+                storedMagazines = new List<MagazineData>();
 
-            return storedMagazines.ToArray();
+            return storedMagazines;
         }
     }
 

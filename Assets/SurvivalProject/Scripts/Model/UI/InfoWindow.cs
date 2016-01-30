@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using UnityEngine.Events;
 
 [Serializable]
 public class AmmoInfoUI
@@ -14,7 +15,7 @@ public class AmmoInfoUI
 
     public IEnumerator Update(AmmoData ammoData)
     {
-        while(true)
+        while (UIController.Instance.CharacterMenu.InfoWindow.UpdateCoroutines)
         {
             caliber.text = ammoData.caliber;
             damage.text = ammoData.damage.ToString();
@@ -35,13 +36,11 @@ public class MagazineInfoUI
 
     public IEnumerator Update(MagazineData magazine, GameObject uiAmmoPrefab)
     {
-        GameObject uiAmmoObject = GameObject.Instantiate(uiAmmoPrefab);
-        uiAmmoObject.AddComponent<AmmoContainer>();
-        uiAmmoObject.GetComponent<AmmoContainer>().AmmoData = magazine.CurrentAmmo;
+        BagItem bagItem = BagItem.CreateToggle(uiAmmoPrefab, ammoValueParent, magazine.CurrentAmmo);
 
-        BagItem.Create(uiAmmoObject, ammoValueParent, uiAmmoObject.GetComponent<AmmoContainer>().ItemData);
+        UIController.Instance.CharacterMenu.InfoWindow.ammoUiObject = bagItem.gameObject;
 
-        while (true)
+        while (UIController.Instance.CharacterMenu.InfoWindow.UpdateCoroutines)
         {
             caliber.text = magazine.Caliber;
             capacity.text = magazine.CurrentAmmoCount.ToString() + '/' + magazine.Capacity.ToString();   
@@ -59,7 +58,7 @@ public class VestInfoUI
 
     public IEnumerator Update(VestData vest)
     {
-        while (true)
+        while (UIController.Instance.CharacterMenu.InfoWindow.UpdateCoroutines)
         {
             defense.text = vest.Defense.ToString();
             magazineCapacity.text = vest.MagazineCount.ToString() + '/' + vest.MagazineCapacity.ToString();
@@ -77,7 +76,7 @@ public class FirearmInfoUI
 
     public IEnumerator Update(FirearmData firearm)
     {
-        while (true)
+        while (UIController.Instance.CharacterMenu.InfoWindow.UpdateCoroutines)
         {
             type.text = firearm.FirearmType;
             caliber.text = firearm.Caliber;
@@ -94,7 +93,7 @@ public class HolsterInfoUI
 
     public IEnumerator Update(HolsterData holster)
     {
-        while (true)
+        while (UIController.Instance.CharacterMenu.InfoWindow.UpdateCoroutines)
         {
             drawSpeed.text = holster.DrawTime.ToString() + 's';
 
@@ -110,7 +109,7 @@ public class ClothingInfoUI
 
     public IEnumerator Update(ClothingData clothing)
     {
-        while (true)
+        while (UIController.Instance.CharacterMenu.InfoWindow.UpdateCoroutines)
         {
             defense.text = clothing.Defense.ToString();
 
@@ -121,6 +120,8 @@ public class ClothingInfoUI
 
 public class InfoWindow : UIWindow
 {
+    [SerializeField]
+    private UIWindow itemInfoWindow;
     [SerializeField]
     private Text itemName;
     [SerializeField]
@@ -135,6 +136,8 @@ public class InfoWindow : UIWindow
     [SerializeField]
     private MagazineInfoUI magazineInfo;
     [SerializeField]
+    public MagazineEquipper magazineEquipper;
+    [SerializeField]
     private VestInfoUI vestInfo;
     [SerializeField]
     private FirearmInfoUI firearmInfo;
@@ -145,6 +148,8 @@ public class InfoWindow : UIWindow
 
     [SerializeField]
     private GameObject ammoUiPrefab;
+    [HideInInspector]
+    public GameObject ammoUiObject;
 
     [SerializeField]
     private GameObject ammoInfoGameObject;
@@ -158,6 +163,13 @@ public class InfoWindow : UIWindow
     private GameObject holsterInfoGameObject;
     [SerializeField]
     private GameObject clothingInfoGameObject;
+
+    [SerializeField]
+    private bool updateCoroutines;
+    public bool UpdateCoroutines
+    {
+        get { return updateCoroutines; }
+    }
 
     public void DisplayInfo(ItemData itemData)
     {
@@ -180,6 +192,9 @@ public class InfoWindow : UIWindow
         itemWeight.text = itemData.Weight.ToString();
         //TODO: add description to ItemData
 
+        itemInfoWindow.Show();
+        updateCoroutines = true;
+
         switch(itemData.GetType().ToString())
         {
             case "AmmoData":
@@ -200,6 +215,7 @@ public class InfoWindow : UIWindow
             {
                 vestInfoGameObject.SetActive(true);
                 StartCoroutine(vestInfo.Update(itemData as VestData));
+                magazineEquipper.Initialize(itemData as VestData);
 
                 break;
             }
@@ -229,13 +245,18 @@ public class InfoWindow : UIWindow
 
     private void SetInfoObjectsInactive()
     {
-        StopAllCoroutines();
+        updateCoroutines = false;
+
+        if (ammoUiObject != null)
+            Destroy(ammoUiObject);
+        
         ammoInfoGameObject.SetActive(false);
         magazineInfoGameObject.SetActive(false);
         vestInfoGameObject.SetActive(false);
+        magazineEquipper.Hide();
         firearmInfoGameObject.SetActive(false);
         holsterInfoGameObject.SetActive(false);
-        clothingInfoGameObject.SetActive(false);
+        clothingInfoGameObject.SetActive(false);       
     }
 
     public override void Hide()
@@ -243,5 +264,7 @@ public class InfoWindow : UIWindow
         base.Hide();
 
         SetInfoObjectsInactive();
+
+        itemInfoWindow.Hide();
     }
 }
