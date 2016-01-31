@@ -183,7 +183,7 @@ public class InfoWindow : UIWindow
 
         if (stack != null)
         {
-            itemData = stack.ContainedItemData;
+            itemData = stack.ContainedItem;
             amount = stack.Amount;
         }
 
@@ -245,6 +245,7 @@ public class InfoWindow : UIWindow
 
     private void SetInfoObjectsInactive()
     {
+        StopAllCoroutines();
         updateCoroutines = false;
 
         if (ammoUiObject != null)

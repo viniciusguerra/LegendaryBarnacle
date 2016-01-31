@@ -50,16 +50,13 @@ public class LootArea : MonoBehaviour
         else
             return;
 
-        bool storeSuccessful = character.EquippedBag.Store(itemToStore);
+        character.EquippedBag.Store(itemToStore, 1);
 
-        if (storeSuccessful == true)
-        {
-            selectedCollectible.gameObject.SetActive(false);
-            collectibleList.Remove(selectedCollectible);
-            selectedCollectible = null;
+        Destroy(selectedCollectible.gameObject);
+        collectibleList.Remove(selectedCollectible);
+        selectedCollectible = null;
 
-            CycleItems();
-        }
+        CycleItems();        
     }
 
     void OnTriggerEnter(Collider collider)

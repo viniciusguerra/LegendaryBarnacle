@@ -6,14 +6,8 @@ using System;
 public class StackData : ItemData
 {
     [SerializeField]
-    private ItemContainer containedItem;
-    public ItemContainer ContainedItem
-    {
-        get { return containedItem; }
-        set { containedItem = value; }
-    }
-
-    public ItemData ContainedItemData { get { return containedItem.ItemData; } }    
+    private ItemData containedItem;
+    public ItemData ContainedItem { get { return containedItem; } set { containedItem = value; } }    
 
     [SerializeField]
     private int amount;
@@ -28,7 +22,7 @@ public class StackData : ItemData
     {
         get
         {
-            return ContainedItemData.ItemName;
+            return containedItem.ItemName;
         }
     }
 
@@ -36,7 +30,7 @@ public class StackData : ItemData
     {
         get
         {
-            return ContainedItemData.Weight * amount;
+            return containedItem.Weight * amount;
         }
     }
 
@@ -46,5 +40,11 @@ public class StackData : ItemData
         {
             return typeof(ItemStack);
         }
+    }
+
+    public StackData(ItemData itemData, int amount)
+    {
+        containedItem = itemData;
+        this.amount = amount;
     }
 }

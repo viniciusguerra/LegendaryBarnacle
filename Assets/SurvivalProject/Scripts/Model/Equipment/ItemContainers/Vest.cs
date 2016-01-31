@@ -11,7 +11,7 @@ public class Vest : Equipment
     private VestData vestData;
     public override ItemData ItemData
     {
-        get { return vestData; }
+        get { return vestData; } protected set { vestData = value as VestData; }
     }
     public VestData VestData
     {

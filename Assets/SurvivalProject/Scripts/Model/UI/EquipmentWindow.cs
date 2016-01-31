@@ -46,7 +46,7 @@ public class EquipmentWindow : UIWindow
                 }
                 case 3:
                 {
-                    UIController.Instance.CharacterMenu.InfoWindow.DisplayInfo(UIController.Instance.CharacterMenu.Character.EquippedHolster.EquippedFirearm.CurrentMagazine.ItemData);
+                    UIController.Instance.CharacterMenu.InfoWindow.DisplayInfo(UIController.Instance.CharacterMenu.Character.EquippedHolster.EquippedFirearm.CurrentMagazine);
                     break;
                 }
                 case 4:

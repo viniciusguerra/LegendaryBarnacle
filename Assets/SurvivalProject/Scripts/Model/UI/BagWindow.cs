@@ -18,12 +18,9 @@ public class BagWindow : UIWindow
     {
         ClearBag();
 
-        foreach (KeyValuePair<ItemData, int> pair in UIController.Instance.CharacterMenu.Character.EquippedBag.StoredItems)
+        foreach (ItemData itemData in UIController.Instance.CharacterMenu.Character.EquippedBag.StoredItems)
         {
-            for (int i = 0; i < pair.Value; i++)
-            {
-                bagItemList.Add(BagItem.CreateToggle(bagItemPrefab, gridTransform, pair.Key));
-            }
+            bagItemList.Add(BagItem.CreateToggle(bagItemPrefab, gridTransform, itemData));            
         }
     }
 

@@ -36,17 +36,30 @@ public class MagazineData : ItemData<Magazine>
     }
 
     //TODO: Load rounds correctly (if changing ammo type, return current amount, etc.)
-    public int Load(AmmoData ammo, int amount)
+    public StackData[] Load(AmmoData ammo, int amount)
     {
         if (ammo.caliber != Caliber)
-            return amount;
+            return new StackData[]{ new StackData(ammo, amount) };
 
+        StackData oldAmmoLeft = null;
+        StackData newAmmoLeft = null;
         int previousAmmoCount = CurrentAmmoCount;
+
+        if (!string.IsNullOrEmpty(CurrentAmmo.ammoName) && ammo.ammoName != CurrentAmmo.ammoName)
+        {
+            oldAmmoLeft = new StackData(CurrentAmmo, currentAmmoCount);
+            previousAmmoCount = 0;
+        }        
 
         CurrentAmmo = ammo;
         CurrentAmmoCount = Mathf.Min(Capacity, previousAmmoCount + amount);
 
-        return amount - (CurrentAmmoCount - previousAmmoCount);
+        int leftOverAmmo = amount - (CurrentAmmoCount - previousAmmoCount);
+
+        if(leftOverAmmo > 0)
+            newAmmoLeft = new StackData(ammo, leftOverAmmo);
+
+        return new StackData[]{ oldAmmoLeft, newAmmoLeft };
     }
 
     public AmmoData Feed()

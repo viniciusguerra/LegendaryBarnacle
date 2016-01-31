@@ -32,6 +32,30 @@ public class VestData : ItemData<Vest>
         }
     }
 
+    public MagazineData StoreMagazine(MagazineData magazineData)
+    {
+        if (StoredMagazines.Count < MagazineCapacity)
+        {
+            StoredMagazines.Add(magazineData);
+            return null;
+        }
+        else
+            return magazineData;
+    }
+
+    public MagazineData RetrieveMagazine(MagazineData magazineData)
+    {
+        int? magazineIndex = StoredMagazines.FindIndex(x => x == magazineData);
+
+        if (magazineIndex.HasValue)
+        {
+            StoredMagazines.RemoveAt(magazineIndex.Value);
+            return magazineData;
+        }
+        else
+            return null;
+    }
+
     #region Collectible
     [SerializeField]
     private string itemName;

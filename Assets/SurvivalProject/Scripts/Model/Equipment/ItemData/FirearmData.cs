@@ -28,11 +28,11 @@ public class FirearmData : ItemData<Firearm>
     }
 
     [SerializeField]
-    private Magazine currentMagazine;
-    public Magazine CurrentMagazine
+    private MagazineData currentMagazine;
+    public MagazineData CurrentMagazine
     {
         get { return currentMagazine; }
-        set { if (currentMagazine.Caliber == Caliber || value == null) currentMagazine = value; }
+        set { if (value == null || value.Caliber == caliber ) currentMagazine = value; }
     }
 
     #region ItemData

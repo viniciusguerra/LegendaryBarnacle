@@ -14,7 +14,7 @@ public class Magazine : Equipment
 
     public override ItemData ItemData
     {
-        get { return magazineData; }
+        get { return magazineData; } protected set { magazineData = value as MagazineData; }
     }   
 
     public string Caliber { get { return magazineData.Caliber; } }

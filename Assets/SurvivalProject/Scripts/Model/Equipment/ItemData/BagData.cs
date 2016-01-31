@@ -16,8 +16,8 @@ public class BagData : ItemData<Bag>
     public float CurrentWeight { get { return currentWeight; } set { currentWeight = value; } }
 
     [SerializeField]
-    private Dictionary<ItemData, int> storedItems;
-    public Dictionary<ItemData, int> StoredItems
+    private List<ItemData> storedItems;
+    public List<ItemData> StoredItems
     {
         get { return storedItems; }
         set { storedItems = value; }

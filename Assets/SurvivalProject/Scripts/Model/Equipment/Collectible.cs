@@ -11,12 +11,34 @@ public class Collectible : MonoBehaviour
     public ItemContainer ItemContainer { get { return itemContainer; } }
     public ItemData ItemData { get { return itemContainer.ItemData; } }
 
-    public void Initialize(ItemData itemData)
+    public void Initialize(ItemData itemData, int amount)
     {
-        Type containerType = itemData.ContainerType.GetType();
-        gameObject.AddComponent(containerType);
+        ItemContainer container;
 
-        itemContainer = GetComponent(containerType) as ItemContainer;
+        Type containerType = itemData.ContainerType.GetType();
+        gameObject.AddComponent(containerType);            
+
+        if (amount > 1)
+        {
+            gameObject.AddComponent<ItemStack>();
+            container = GetComponent<ItemStack>();
+            ((ItemStack)container).Amount = amount;
+            ((ItemStack)container).StackData.ContainedItem = itemData;
+        }
+        else
+        {
+            container = GetComponent(containerType) as ItemContainer;
+        }
+
+        itemContainer = container;
+    }
+
+    public static void CreateCollectible(ItemData itemData, int amount, GameObject prefab, Vector3 position)
+    {
+        GameObject collectibleObject = Instantiate(prefab);
+
+        collectibleObject.transform.position = position;
+        collectibleObject.GetComponent<Collectible>().Initialize(itemData, amount);
     }
 
     public static void CreateCollectible(ItemData itemData, GameObject prefab, Vector3 position)
@@ -24,6 +46,6 @@ public class Collectible : MonoBehaviour
         GameObject collectibleObject = Instantiate(prefab);
 
         collectibleObject.transform.position = position;
-        collectibleObject.GetComponent<Collectible>().Initialize(itemData);
+        collectibleObject.GetComponent<Collectible>().Initialize(itemData, 1);
     }
 }

@@ -11,28 +11,23 @@ public class MagazineEquipper : UIWindow
     private ToggleGroup magazineToggleGroup;
     [SerializeField]
     private Transform magazineGridViewTransform;
-    private List<MagazineUI> magazineUiList;
-    private MagazineUI selectedMagazine;
+    private List<EquippableMagazineUI> magazineUiList;
+    private EquippableMagazineUI selectedMagazine;
 
     public GameObject magazineUiPrefab;
 
-    public int LoadAmmoIntoSelectedMagazine(AmmoData ammoData, int amount)
+    private StackData[] LoadAmmoIntoSelectedMagazine(AmmoData ammoData, int amount)
     {
         return selectedMagazine.LoadMagazine(ammoData, amount);
     }
 
     public void EquipSelectedMagazine(MagazineData magazineData)
     {
-        //stores current magazine
-        if (selectedMagazine.MagazineData != null)
-        {
-            UIController.Instance.CharacterMenu.Character.EquippedBag.Store(selectedMagazine.MagazineData);
-            vestData.StoredMagazines.RemoveAt(vestData.StoredMagazines.FindIndex(x => x == selectedMagazine.MagazineData));
-        }
-
-        MagazineData magazineToAdd = UIController.Instance.CharacterMenu.Character.EquippedBag.Retrieve(magazineData) ? magazineData : null;
-
-        vestData.StoredMagazines.Add(magazineToAdd);
+        if (selectedMagazine.MagazineData != null)        
+            UIController.Instance.CharacterMenu.Character.EquippedBag.Store(vestData.RetrieveMagazine(selectedMagazine.MagazineData), 1);
+        
+        if (vestData.StoreMagazine(magazineData) != null)
+            UIController.Instance.CharacterMenu.Character.EquippedBag.Store(magazineData, 1);
 
         UIController.Instance.CharacterMenu.BagWindow.RefreshBag();
         UIController.Instance.CharacterMenu.SetDefaultSelection();
@@ -45,7 +40,14 @@ public class MagazineEquipper : UIWindow
     {
         if (bagItem.itemData.GetType().Equals(typeof(MagazineData)))
         {
-            EquipSelectedMagazine(bagItem.itemData as MagazineData);
+            MagazineData magazineToAdd = bagItem.itemData as MagazineData;
+
+            StackData stackData = UIController.Instance.CharacterMenu.Character.EquippedBag.Retrieve(magazineToAdd, 1);
+            magazineToAdd = stackData != null ? stackData.ContainedItem as MagazineData : null;
+
+            if(magazineToAdd != null)
+                EquipSelectedMagazine(magazineToAdd);
+
             return;
         }
 
@@ -53,16 +55,31 @@ public class MagazineEquipper : UIWindow
 
         if (stack != null && selectedMagazine != null && selectedMagazine.MagazineData != null)
         {
-            if (stack.ContainedItemData.GetType().Equals(typeof(AmmoData)))
+            if (stack.ContainedItem.GetType().Equals(typeof(AmmoData)))
             {
-                stack.Amount = LoadAmmoIntoSelectedMagazine(stack.ContainedItemData as AmmoData, stack.Amount);
+                //returns old ammo from magazine
+                stack = UIController.Instance.CharacterMenu.Character.EquippedBag.Retrieve(stack.ContainedItem, stack.Amount);
+                StackData[] leftOverAmmoStacks = LoadAmmoIntoSelectedMagazine(stack.ContainedItem as AmmoData, stack.Amount);
+
                 ClearMagazineToggles();
                 CreateMagazineToggles();
+
+                //if there is any left over ammo, store it
+                if (leftOverAmmoStacks != null)
+                {
+                    foreach (StackData leftOverStack in leftOverAmmoStacks)
+                    {
+                        if(leftOverStack != null && !string.IsNullOrEmpty(leftOverStack.ItemName))
+                            UIController.Instance.CharacterMenu.Character.EquippedBag.Store(leftOverStack, 1);
+                    }
+                    
+                    UIController.Instance.CharacterMenu.BagWindow.RefreshBag();
+                }
             }
         }
     }
 
-    private void SelectMagazine(bool value, MagazineUI magazine)
+    private void SelectMagazine(bool value, EquippableMagazineUI magazine)
     {
         if (value)
             selectedMagazine = magazine;
@@ -94,7 +111,7 @@ public class MagazineEquipper : UIWindow
                 magazineData = null;
             }
 
-            MagazineUI magazineUi = magazineUiGameObject.GetComponent<MagazineUI>();
+            EquippableMagazineUI magazineUi = magazineUiGameObject.GetComponent<EquippableMagazineUI>();
             magazineUi.Initialize(magazineData);
 
             Toggle toggle = magazineUiGameObject.GetComponent<Toggle>();
@@ -107,7 +124,7 @@ public class MagazineEquipper : UIWindow
 
     private void ClearMagazineToggles()
     {
-        foreach (MagazineUI magazineUi in magazineUiList)
+        foreach (EquippableMagazineUI magazineUi in magazineUiList)
         {
             Destroy(magazineUi.gameObject);
         }
@@ -125,6 +142,6 @@ public class MagazineEquipper : UIWindow
 
     void Awake()
     {
-        magazineUiList = new List<MagazineUI>();
+        magazineUiList = new List<EquippableMagazineUI>();
     }
 }

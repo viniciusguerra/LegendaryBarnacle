@@ -11,7 +11,8 @@ public class AmmoContainer : ItemContainer
         get
         {
             return ammoData;
-        }        
+        }
+        protected set { ammoData = value as AmmoData; }
     }
 
     public AmmoData AmmoData

@@ -8,11 +8,11 @@ public class Firearm : Equipment
 {
     [SerializeField]
     private FirearmData firearmData;
-    public override ItemData ItemData { get { return firearmData; } }
+    public override ItemData ItemData { get { return firearmData; } protected set { firearmData = value as FirearmData; } }
 
     public string Caliber { get { return firearmData.Caliber; } }
     public string FirearmType { get { return firearmData.FirearmType; } }
-    public Magazine CurrentMagazine
+    public MagazineData CurrentMagazine
     {
         get { return firearmData.CurrentMagazine; }
         set
@@ -134,20 +134,20 @@ public class Firearm : Equipment
     /// <summary>
     /// Loads given magazine, if caliber is compatible, and returns the remaining one, if available. If caliber is not compatible, returns the given magazine.
     /// </summary>
-    /// <param name="magazine">Magazine to be loaded</param>
+    /// <param name="magazineData">Magazine to be loaded</param>
     /// <returns>Remaining magazine</returns>
-    public Magazine LoadMagazine(Magazine magazine)
+    public MagazineData LoadMagazine(MagazineData magazineData)
     {
-        if (((MagazineData)(magazine.ItemData)).Caliber == firearmData.Caliber)
+        if (magazineData == null || magazineData.Caliber == firearmData.Caliber)
         {
-            Magazine oldMagazine = CurrentMagazine;
+            MagazineData oldMagazine = CurrentMagazine;
 
-            CurrentMagazine = magazine;
+            CurrentMagazine = magazineData;
 
             return oldMagazine;
         }
         else
-            return magazine;
+            return magazineData;
     }
 
     private void LoadChamber()
@@ -155,7 +155,7 @@ public class Firearm : Equipment
         if (CurrentMagazine == null)
             return;
             
-        ChamberedAmmo = CurrentMagazine.MagazineData.Feed();
+        ChamberedAmmo = CurrentMagazine.Feed();
         animator.SetBool(a_hasAmmo, ChamberedAmmo == null ? false : true);
     }
 

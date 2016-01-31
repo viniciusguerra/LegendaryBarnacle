@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using System;
 
-public class MagazineUI : MonoBehaviour
+public class EquippableMagazineUI : MonoBehaviour
 {
     private MagazineData magazineData;
     public MagazineData MagazineData
@@ -14,13 +14,18 @@ public class MagazineUI : MonoBehaviour
         {
             magazineData = value;
 
-            if(ammoValue != null)
-                DestroyImmediate(ammoValue);
+            if(ammoBagItem != null)
+                DestroyImmediate(ammoBagItem);
 
             if(value != null)
             {
                 if (value.CurrentAmmo != null && !string.IsNullOrEmpty(value.CurrentAmmo.ammoName))
-                    ammoValue = BagItem.CreateButton(bagItemPrefab, ammoValueTransform, value.CurrentAmmo);
+                    ammoBagItem = BagItem.CreateButton(bagItemPrefab, ammoValueTransform, value.CurrentAmmo);
+            }
+            else
+            {
+                valuesGameObject.SetActive(false);
+                nameText.text = "Empty";
             }
         }
     }
@@ -40,7 +45,7 @@ public class MagazineUI : MonoBehaviour
     [SerializeField]
     private GameObject bagItemPrefab;
 
-    private BagItem ammoValue;
+    private BagItem ammoBagItem;
 
     private bool updateInfo;
     public bool UpdateInfo
@@ -64,7 +69,7 @@ public class MagazineUI : MonoBehaviour
         UpdateInfo = true;
     }
 
-    public int LoadMagazine(AmmoData ammoData, int amount)
+    public StackData[] LoadMagazine(AmmoData ammoData, int amount)
     {
         return magazineData.Load(ammoData, amount);
     }
@@ -79,12 +84,7 @@ public class MagazineUI : MonoBehaviour
 
             caliberText.text = magazineData.Caliber;
             capacityText.text = magazineData.CurrentAmmoCount.ToString() + '/' + magazineData.Capacity.ToString();
-        }
-        else
-        {
-            valuesGameObject.SetActive(false);
-            nameText.text = "Empty";
-        }
+        }        
     }
 
     void Update()
