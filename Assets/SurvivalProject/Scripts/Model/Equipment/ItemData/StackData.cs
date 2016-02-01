@@ -6,32 +6,45 @@ using System;
 public class StackData : ItemData
 {
     [SerializeField]
-    private string itemName;
+    private ItemData containedItem;
+    public ItemData ContainedItem { get { return containedItem; } set { containedItem = value; } }    
+
+    [SerializeField]
+    private int amount;
+    public int Amount { get { return amount; }
+        set
+        {
+            amount = value;
+        }
+    }
+
     public override string ItemName
     {
         get
         {
-            return itemName;
+            return containedItem.ItemName;
         }
     }
 
-    [SerializeField]
-    private float weight;
     public override float Weight
     {
         get
         {
-            return weight;
+            return containedItem.Weight * amount;
         }
     }
 
-    public void SetWeight(float value)
+    public override Type ContainerType
     {
-        weight = value;
+        get
+        {
+            return typeof(ItemStack);
+        }
     }
 
-    public void SetName(string value)
+    public StackData(ItemData itemData, int amount)
     {
-        itemName = value;
+        containedItem = itemData;
+        this.amount = amount;
     }
 }

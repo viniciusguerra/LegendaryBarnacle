@@ -4,6 +4,13 @@ using System.Collections;
 
 public class HUD : MonoBehaviour
 {
+    [SerializeField]
+    private ReloadMenu reloadMenu;
+    public ReloadMenu ReloadMenu
+    {
+        get { return reloadMenu; }
+    }
+
     public RawImage weaponCamera;
     public float weaponCameraFadeTime = 1f;
     private bool weaponCameraVisible = false;

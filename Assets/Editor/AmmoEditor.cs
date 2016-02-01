@@ -20,8 +20,7 @@ public class AmmoDrawer : PropertyDrawer
         position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
 
         //store original indent levels
-        var initialIndent = EditorGUI.indentLevel;
-        EditorGUI.indentLevel = 0;
+        int initialIndent = EditorGUI.indentLevel;
 
         //define element positions
         float fieldHeight = 16;
@@ -66,8 +65,9 @@ public class AmmoDrawer : PropertyDrawer
             var ammoPopupRect = new Rect(position.x + columnWidth, height, columnWidth, fieldHeight);
             var setButtonRect = new Rect(position.x, height, columnWidth, fieldHeight);
 
-            //load ammo types from database
-            AmmoData[] ammoTypesFromDatabase = AmmoDatabase.Load().ToArray();
+            //load ammo types from database       
+            AmmoDatabase ammoDatabase = new AmmoDatabase();
+            AmmoData[] ammoTypesFromDatabase = ammoDatabase.Load().ToArray();
             string[] ammoNamesFromDatabase = new string[ammoTypesFromDatabase.Length + 1];
             ammoNamesFromDatabase[0] = "No Change";
 
@@ -120,15 +120,9 @@ public class AmmoDrawer : PropertyDrawer
             EditorGUI.LabelField(ammoWeightLabelRect, "Weight");
             EditorGUI.LabelField(ammoWeightValueRect, property.FindPropertyRelative("weight").floatValue.ToString(), EditorStyles.boldLabel);
 
+            string ammoPrefabsPath = ammoDatabase.PrefabsPath;
             EditorGUI.LabelField(ammoPrefabLabelRect, "Prefab");
-            EditorGUI.LabelField(ammoPrefabValueRect, AmmoDatabase.ammoPrefabsPath + property.FindPropertyRelative("prefabName").stringValue, EditorStyles.boldLabel);
-            //GameObject prefabAtPath = AssetDatabase.LoadAssetAtPath<GameObject>(AmmoDatabase.ammoPrefabsPath + property.FindPropertyRelative("prefabName").stringValue);
-            //EditorGUI.ObjectField(ammoPrefabValueRect, prefabAtPath != null ? prefabAtPath : null, typeof(GameObject), false);
-        }
-        else
-        {
-            var nullLabel = new Rect(position.x, height, columnWidth * 2, fieldHeight);
-            EditorGUI.LabelField(nullLabel, "Object Is Null");
+            EditorGUI.LabelField(ammoPrefabValueRect, ammoPrefabsPath + property.FindPropertyRelative("prefabName").stringValue, EditorStyles.boldLabel);
         }
 
         // Set indent back to what it was

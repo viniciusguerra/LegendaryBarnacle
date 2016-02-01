@@ -58,7 +58,6 @@ public class Character : MonoBehaviour
 
     public void Equip(Equipment equipment)
     {
-        Equipment leftOverEquipment = null;
         Equipment equipmentToStore = null;
 
         Type equipmentType = equipment.GetType();
@@ -116,14 +115,10 @@ public class Character : MonoBehaviour
                 break;
         }
 
-        //stores any previously equipped items
+        //stores any previously equipped items and discards if it doesn't fit in the bag
         if (equipmentToStore != null)
         {
-            leftOverEquipment = equippedBag.Store(equipmentToStore) ? null : equipmentToStore;
-
-            //discards previously equipped item if it can't be stored
-            if (leftOverEquipment != null)
-                Collectible.CreateCollectible(leftOverEquipment, SceneManager.Instance.CollectiblePrefab, transform.position + transform.forward);
+            equippedBag.Store(equipmentToStore.ItemData, 1);
         }
     }
 

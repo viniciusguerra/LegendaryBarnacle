@@ -180,6 +180,14 @@ public class PlayerInput : CharacterInput
 
     }
 
+    public void HandleReload()
+    {
+        if(XboxOneInput.GetButtonDown(XboxOneButton.X))
+        {
+            UIController.Instance.HUD.ReloadMenu.Toggle();
+        }
+    }
+
     public void HandleCharacterUnarmedInput()
     {
         if(!operationEnabled && !enabledCrosshair)
@@ -207,6 +215,7 @@ public class PlayerInput : CharacterInput
             HandleAim();
             HandleOperation();
             HandleCharacterUnarmedInput();
+            HandleReload();
         }
         else
         {
@@ -214,6 +223,9 @@ public class PlayerInput : CharacterInput
         }
 
         if (XboxOneInput.GetButtonUp(XboxOneButton.Menu))
+        {
             UIController.Instance.CharacterMenu.Toggle();
+            UIController.Instance.HUD.ReloadMenu.Hide();
+        }
     }
 }

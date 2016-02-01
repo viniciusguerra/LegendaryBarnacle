@@ -3,7 +3,7 @@ using System.Collections;
 using System;
 
 [Serializable]
-public class FirearmData : ItemData
+public class FirearmData : ItemData<Firearm>
 {
     [SerializeField]
     private string firearmType;
@@ -17,6 +17,22 @@ public class FirearmData : ItemData
     public string Caliber
     {
         get { return caliber; }
+    }
+
+    [SerializeField]
+    protected AmmoData chamberedAmmo;
+    public AmmoData ChamberedAmmo
+    {
+        get { return chamberedAmmo; }
+        set { if (value == null || value.caliber == caliber) chamberedAmmo = value; }
+    }
+
+    [SerializeField]
+    private MagazineData currentMagazine;
+    public MagazineData CurrentMagazine
+    {
+        get { return currentMagazine; }
+        set { if (value == null || value.Caliber == caliber ) currentMagazine = value; }
     }
 
     #region ItemData
@@ -37,6 +53,15 @@ public class FirearmData : ItemData
         get
         {
             return itemWeight;
+        }
+    }
+
+    public override ItemDatabase Database
+    {
+        get
+        {
+            //TODO: Create Firearm Database
+            throw new NotImplementedException();
         }
     }
     #endregion

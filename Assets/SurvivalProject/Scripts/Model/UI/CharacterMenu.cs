@@ -28,6 +28,30 @@ public class CharacterMenu : UIWindow
     private ToggleGroup itemSelectionToggleGroup;
     public ToggleGroup ItemSelectionToggleGroup { get { return itemSelectionToggleGroup; } }
 
+    public void SetDefaultSelection()
+    {
+        equipmentWindow.SetDefaultSelection();
+    }
+
+    public void SetDefaultSelection(bool value)
+    {
+        if(value)
+            equipmentWindow.SetDefaultSelection();
+    }
+
+    public void HandleBagItem(BagItem bagItem)
+    {
+        if(!infoWindow.magazineEquipper.IsVisible)
+        {
+            SetDefaultSelection();
+            bagItem.DisplayInfo();
+        }
+        else
+        {
+            infoWindow.magazineEquipper.HandleBagItem(bagItem);
+        }        
+    }
+
     public override void Show()
     {
         base.Show();

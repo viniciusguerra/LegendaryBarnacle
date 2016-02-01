@@ -31,32 +31,32 @@ public class EquipmentWindow : UIWindow
             {
                 case 0:
                 {
-                    UIController.Instance.CharacterMenu.InfoWindow.DisplayInfo(UIController.Instance.CharacterMenu.Character.EquippedHolster.EquippedFirearm);
+                    UIController.Instance.CharacterMenu.InfoWindow.DisplayInfo(UIController.Instance.CharacterMenu.Character.EquippedHolster.EquippedFirearm.ItemData);
                     break;
                 }
                 case 1:
                 {
-                    UIController.Instance.CharacterMenu.InfoWindow.DisplayInfo(UIController.Instance.CharacterMenu.Character.EquippedBag);
+                    UIController.Instance.CharacterMenu.InfoWindow.DisplayInfo(UIController.Instance.CharacterMenu.Character.EquippedBag.ItemData);
                     break;
                 }
                 case 2:
                 {
-                    UIController.Instance.CharacterMenu.InfoWindow.DisplayInfo(UIController.Instance.CharacterMenu.Character.EquippedHolster);
+                    UIController.Instance.CharacterMenu.InfoWindow.DisplayInfo(UIController.Instance.CharacterMenu.Character.EquippedHolster.ItemData);
                     break;
                 }
                 case 3:
                 {
-                    UIController.Instance.CharacterMenu.InfoWindow.DisplayInfo(UIController.Instance.CharacterMenu.Character.EquippedHolster.EquippedFirearm.currentMagazine);
+                    UIController.Instance.CharacterMenu.InfoWindow.DisplayInfo(UIController.Instance.CharacterMenu.Character.EquippedHolster.EquippedFirearm.CurrentMagazine);
                     break;
                 }
                 case 4:
                 {
-                    UIController.Instance.CharacterMenu.InfoWindow.DisplayInfo(UIController.Instance.CharacterMenu.Character.EquippedVest);
+                    UIController.Instance.CharacterMenu.InfoWindow.DisplayInfo(UIController.Instance.CharacterMenu.Character.EquippedVest.ItemData);
                     break;
                 }
                 case 5:
                 {
-                    UIController.Instance.CharacterMenu.InfoWindow.DisplayInfo(UIController.Instance.CharacterMenu.Character.EquippedClothing);
+                    UIController.Instance.CharacterMenu.InfoWindow.DisplayInfo(UIController.Instance.CharacterMenu.Character.EquippedClothing.ItemData);
                     break;
                 }
                 default:
@@ -64,12 +64,17 @@ public class EquipmentWindow : UIWindow
             }
         }
     }
+    
+    public void SetDefaultSelection()
+    {
+        firearmToggle.Select();
+    }
 
     public override void Show()
     {
         base.Show();
 
-        firearmToggle.Select();
+        SetDefaultSelection();
     }
 
     public override void Hide()

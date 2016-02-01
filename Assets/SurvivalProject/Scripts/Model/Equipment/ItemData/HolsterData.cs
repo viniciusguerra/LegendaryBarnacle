@@ -3,7 +3,7 @@ using System.Collections;
 using System;
 
 [Serializable]
-public class HolsterData : ItemData
+public class HolsterData : ItemData<Holster>
 {
     [SerializeField]
     private float drawTime;
@@ -33,6 +33,15 @@ public class HolsterData : ItemData
         get
         {
             return itemWeight;
+        }
+    }
+
+    public override ItemDatabase Database
+    {
+        get
+        {
+            //TODO: Create Holster Database
+            throw new NotImplementedException();
         }
     }
     #endregion

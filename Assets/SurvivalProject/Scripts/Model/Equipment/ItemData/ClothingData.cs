@@ -3,7 +3,7 @@ using System.Collections;
 using System;
 
 [Serializable]
-public class ClothingData : ItemData
+public class ClothingData : ItemData<Clothing>
 {
     [SerializeField]
     private float defense;
@@ -30,6 +30,15 @@ public class ClothingData : ItemData
         get
         {
             return itemWeight;
+        }
+    }
+
+    public override ItemDatabase Database
+    {
+        get
+        {
+            //TODO: Create Clothing Database
+            throw new NotImplementedException();
         }
     }
     #endregion

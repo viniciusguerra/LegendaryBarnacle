@@ -5,7 +5,7 @@ using System.Xml;
 using System.Xml.Serialization;
 
 [Serializable]
-public class AmmoData : ItemData
+public class AmmoData : ItemData<AmmoContainer>
 {
     [XmlAttribute("Name")]
     public string ammoName;
@@ -35,6 +35,16 @@ public class AmmoData : ItemData
         get
         {
             return weight;
+        }
+    }
+
+    [SerializeField]
+    private AmmoDatabase ammoDatabase = new AmmoDatabase();
+    public override ItemDatabase Database
+    {
+        get
+        {
+            return ammoDatabase;
         }
     }
 }

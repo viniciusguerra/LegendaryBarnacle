@@ -11,7 +11,7 @@ public class Vest : Equipment
     private VestData vestData;
     public override ItemData ItemData
     {
-        get { return vestData; }
+        get { return vestData; } protected set { vestData = value as VestData; }
     }
     public VestData VestData
     {
@@ -25,18 +25,10 @@ public class Vest : Equipment
 
     public int MagazineCapacity { get { return vestData.MagazineCapacity; } }
 
-    public int MagazineCount { get { return storedMagazines.Count; } }
+    public int MagazineCount { get { return vestData.MagazineCount; } }
 
-    [SerializeField]
-    private Dictionary<Magazine, int> storedMagazines;
-    public KeyValuePair<Magazine, int>[] StoredMagazines
+    public List<MagazineData> StoredMagazines
     {
-        get { return storedMagazines.ToArray(); }
-    }    
-
-    void Start()
-    {
-        if(storedMagazines == null)
-            storedMagazines = new Dictionary<Magazine, int>();
+        get { return vestData.StoredMagazines; }
     }
 }

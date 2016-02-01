@@ -10,7 +10,7 @@ public class Holster : Equipment
 
     public override ItemData ItemData
     {
-        get { return holsterData; }
+        get { return holsterData; } protected set { holsterData = value as HolsterData; }
     }
 
     public float DrawTime

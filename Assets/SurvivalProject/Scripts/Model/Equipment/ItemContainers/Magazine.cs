@@ -7,52 +7,40 @@ public class Magazine : Equipment
 {
     [SerializeField]
     private MagazineData magazineData;
-
-    public override ItemData ItemData
+    public MagazineData MagazineData
     {
         get { return magazineData; }
     }
 
+    public override ItemData ItemData
+    {
+        get { return magazineData; } protected set { magazineData = value as MagazineData; }
+    }   
+
     public string Caliber { get { return magazineData.Caliber; } }
     public int Capacity { get { return magazineData.Capacity; } }
 
-    public AmmoData currentAmmo;
-
-    public int currentAmmoCount;
-
-    public int Load(AmmoData ammo, int amount)
+    public AmmoData CurrentAmmo
     {
-        if (ammo.caliber != magazineData.Caliber)
-            return amount;
-
-        int previousAmmoCount = currentAmmoCount;
-
-        currentAmmo = ammo;
-        currentAmmoCount = Mathf.Min(magazineData.Capacity, previousAmmoCount + amount);
-
-        return amount - (currentAmmoCount - previousAmmoCount);
+        get
+        {
+            return magazineData.CurrentAmmo;
+        }
+        set
+        {
+            magazineData.CurrentAmmo = value;
+        }
     }
 
-    public AmmoData Feed()
+    public int CurrentAmmoCount
     {
-        AmmoData ammoToReturn;
-
-        if(currentAmmoCount > 0)
+        get
         {
-            ammoToReturn = currentAmmo;
-
-            currentAmmoCount--;
-
-            if(currentAmmoCount == 0)
-            {
-                currentAmmo = null;
-            }            
+            return magazineData.CurrentAmmoCount;
         }
-        else
+        set
         {
-            ammoToReturn = null;
+            magazineData.CurrentAmmoCount = value;
         }
-
-        return ammoToReturn;
     }    
 }

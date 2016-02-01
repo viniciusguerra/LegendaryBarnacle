@@ -12,133 +12,211 @@ public class Bag : Equipment
     public override ItemData ItemData
     {
         get { return bagData; }
+        protected set { bagData = value as BagData; }
     }
 
     public float MaxWeight { get { return bagData.MaxWeight; } }
 
-    [SerializeField]
-    private float currentWeight;
-    public float CurrentWeight { get { return currentWeight; } }
+    public float CurrentWeight { get { return bagData.CurrentWeight; } private set { bagData.CurrentWeight = value; } }
 
-    [SerializeField]
-    private Dictionary<ItemContainer, int> storedItems;
-    public KeyValuePair<ItemContainer, int>[] StoredItems
+    public List<ItemData> StoredItems
     {
-        get { return storedItems.ToArray(); }
-    }
-
-    /// <summary>
-    /// Stores a single unit of the given collectible to bag and updates its current weight. Returns if it was stored or not.
-    /// </summary>
-    /// <param name="itemContainer">Item to be stored</param>
-    /// <returns>True if it was stored</returns>
-    public bool Store(ItemContainer itemContainer)
-    {
-        if(bagData.MaxWeight >= currentWeight + itemContainer.ItemData.Weight)
-        {
-            if (!storedItems.ContainsKey(itemContainer))            
-                storedItems.Add(itemContainer, 1);
-            else
-                storedItems[itemContainer]++;
-
-            itemContainer.transform.parent = transform;
-            ReparentItemContainer(itemContainer);
-            currentWeight += itemContainer.ItemData.Weight;
-            return true;
-        }
-        else
-        {
-            return false;
-        }        
+        get { return bagData.StoredItems; }
+        private set { bagData.StoredItems = value; }
     }
 
     /// <summary>
     /// Stores given amount of the given collectible to bag and updates its current weight. Returns amount of items left over.
     /// </summary>
-    /// <param name="itemContainer">Collectible to be stored</param>
+    /// <param name="itemData">Collectible to be stored</param>
     /// <param name="amount">Amount of units to be stored</param>
-    /// <returns>Amount of items left over</returns>
-    public int Store(ItemContainer itemContainer, int amount)
+    public void Store(ItemData itemData, int amount)
     {
-        int itemsLeft;        
+        int itemsLeft = 0;
 
-        float addedWeight = itemContainer.ItemData.Weight * amount;
+        float addedWeight = itemData.Weight * amount;
 
-        if (currentWeight + addedWeight <= bagData.MaxWeight)
-            itemsLeft = 0;
-        else
+        if(CurrentWeight + addedWeight > MaxWeight)
         {
-            float weightLeft = (currentWeight + addedWeight) - bagData.MaxWeight;
-            itemsLeft = (int)(weightLeft / itemContainer.ItemData.Weight);
+            itemsLeft = CalculateLeftOver(itemData.Weight, addedWeight);
         }
 
-        if (!storedItems.ContainsKey(itemContainer))
-            storedItems.Add(itemContainer, amount - itemsLeft);
+        int amountToStore = amount - itemsLeft;
+
+        //if item is stack, add to a current stack
+        if (itemData.GetType().Equals(typeof(StackData)))
+        {
+            StackData stack = itemData as StackData;
+            AddStack(stack.ContainedItem, stack.Amount);
+        }
         else
-            storedItems[itemContainer] += amount - itemsLeft;
+        {
+            //add stack if there is more than one item to store
+            if (amountToStore > 1)
+            {
+                AddStack(itemData, amountToStore);
+            }
+            else
+            {
+                //add single unit
+                if (amountToStore == 1)
+                    StoredItems.Add(itemData);
+            }
+        }
 
-        ReparentItemContainer(itemContainer);
-        currentWeight += itemContainer.ItemData.Weight * (amount - itemsLeft);
+        //add weight
+        CurrentWeight += itemData.Weight * (amountToStore);
 
-        return itemsLeft;
+        //discard leftovers
+        if (itemsLeft > 0)
+            Discard(itemData, itemsLeft);
     }
 
-    private void ReparentItemContainer(ItemContainer value)
+    private int CalculateLeftOver(float unitWeight, float totalWeight)
     {
-        value.gameObject.transform.parent = transform;
-    }
-
-    /// <summary>
-    /// Retrieves a single unit of the given collectible and updates current weight.
-    /// </summary>
-    /// <param name="itemContainer">Collectible to be retrieved</param>
-    /// <returns>True if the object was retrieved</returns>
-    public bool Retrieve(ItemContainer itemContainer)
-    {
-        bool contains;
-
-        contains = storedItems.ContainsKey(itemContainer) ? true : false;
-        currentWeight -= contains ? itemContainer.ItemData.Weight : 0;
-
-        return contains;
+        if (CurrentWeight + totalWeight <= MaxWeight)
+        {
+            return 0;
+        }
+        else
+        {
+            return CalculateLeftOver(unitWeight, totalWeight - unitWeight) + 1;
+        }
     }
 
     /// <summary>
     /// Retrieves given amount of the given collectible and updates current weight.
     /// </summary>
-    /// <param name="itemContainer">Collectible to be retrieved</param>
+    /// <param name="itemData">Collectible to be retrieved</param>
     /// <param name="amount">Amount of collectibles to be retrieved</param>
-    /// <returns>Amount of collectibles retrieved</returns>
-    public int Retrieve(ItemContainer itemContainer, int amount)
+    /// <returns>Stack of that item or null</returns>
+    public StackData Retrieve(ItemData itemData, int amount)
     {
-        int amountToRetrieve;
+        StackData stack = null;
 
-        if (storedItems.ContainsKey(itemContainer))
+        //if a stack exists, return the possible amount
+        stack = RemoveStack(itemData, amount);
+        
+        if(stack == null)
         {
-            amountToRetrieve = storedItems[itemContainer] >= amount ? amount : storedItems[itemContainer];
-        }
-        else
-        {
-            amountToRetrieve = 0;
+            //if a single unit exists, return a stack with it
+            if (StoredItems.Contains(itemData))
+            {
+                StoredItems.Remove(itemData);
+                stack = new StackData(itemData, 1);
+            }
         }
 
-        if (storedItems[itemContainer] == 0)
-            storedItems.Remove(itemContainer);
-
-        currentWeight -= itemContainer.ItemData.Weight * amountToRetrieve;
-        return amountToRetrieve;
+        return stack;
     }
 
-    public void Discard(ItemContainer itemData, int amount)
+    public void Discard(ItemData itemData, int amount)
     {
-        int amountToDiscard = Retrieve(itemData, amount);
+        Collectible.CreateCollectible(itemData, amount, SceneManager.Instance.CollectiblePrefab, transform.position + transform.forward);
+    }
 
-        Collectible.CreateCollectible(itemData, SceneManager.Instance.CollectiblePrefab, transform.position + transform.forward);
+    private void AddStack(ItemData itemData, int amount)
+    {
+        //if a unit of the item exists, it is removed and a stack is added instead
+        if (StoredItems.Contains(itemData))
+        {
+            StoredItems.Remove(itemData);
+            amount++;
+        }
+
+        StackData stack;
+
+        //if a stack of the item is found, it is removed and the current amount is added
+        foreach (ItemData item in StoredItems)
+        {
+            stack = item as StackData;
+
+            if (stack != null && stack.ContainedItem.Equals(itemData))
+            {                
+                StoredItems.Remove(item);
+                amount += stack.Amount;
+                break;
+            }
+        }
+
+        stack = new StackData(itemData, amount);
+        StoredItems.Add(stack);
+    }
+
+    private StackData RemoveStack(ItemData itemData, int amount)
+    {
+        if(amount == 1)
+        {
+            if (StoredItems.Contains(itemData))
+            {
+                StoredItems.Remove(itemData);
+                return new StackData(itemData, 1);
+            }            
+        }
+
+        StackData currentStack = null;
+
+        foreach (ItemData item in StoredItems)
+        {
+            currentStack = item as StackData;
+
+            if (currentStack != null && currentStack.ContainedItem.Equals(itemData))
+            {
+                //remove stack containing the item from the bag
+                StoredItems.Remove(item);
+
+                int leftOverAmount = currentStack.Amount - amount;
+
+                if (leftOverAmount < 0)
+                {               
+                    //return the stack amount if it was less than the given     
+                    currentStack = new StackData(itemData, amount + leftOverAmount);
+                    break;
+                }
+                else
+                {
+                    if(leftOverAmount == 0)
+                    {
+                        //return the given amount if none was left
+                        currentStack = new StackData(itemData, amount);
+                        break;
+                    }
+                    else
+                    {
+                        //return the given amount if at least one was left
+                        currentStack = new StackData(itemData, amount);
+
+                        //store back a leftover stack
+                        StoredItems.Add(new StackData(itemData, currentStack.Amount - amount) as ItemData);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return currentStack;
+    }
+
+    private bool StackExists(ItemData itemData)
+    {
+        StackData stack;
+
+        foreach (ItemData item in StoredItems)
+        {
+            stack = item as StackData;
+
+            if (stack != null && stack.ContainedItem == itemData)
+            {
+                return true; 
+            }
+        }
+
+        return false;
     }
 
     void Start()
     {
-        if (storedItems == null)
-            storedItems = new Dictionary<ItemContainer, int>();
+        if (StoredItems == null)
+            StoredItems = new List<ItemData>();
     }
 }
