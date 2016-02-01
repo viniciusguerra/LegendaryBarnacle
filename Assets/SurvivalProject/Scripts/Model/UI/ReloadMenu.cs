@@ -59,7 +59,10 @@ public class ReloadMenu : UIWindow
 
     public void StoreLoadedMagazine()
     {
-        player.EquippedVest.VestData.StoreMagazine(player.EquippedHolster.EquippedFirearm.LoadMagazine(null));
+        MagazineData magazineToStore = player.EquippedHolster.EquippedFirearm.LoadMagazine(null);
+
+        if(magazineToStore != null && !string.IsNullOrEmpty(magazineToStore.ItemName))
+            player.EquippedVest.VestData.StoreMagazine(magazineToStore);
 
         Hide();
     }
