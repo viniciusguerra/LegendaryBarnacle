@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
-using UnityEditor;
 using System;
 using System.Reflection;
 
@@ -23,10 +22,9 @@ public abstract class ItemDatabase<T> : ItemDatabase where T : ItemData
     /// Loads all data from the database
     /// </summary>
     /// <returns>An array containing all the entries from the database</returns>
-    //public abstract List<T> Load(); FUCKING WORKS
     public List<T> Load()
     {
-        TextAsset xml = AssetDatabase.LoadAssetAtPath<TextAsset>(DatabasePath);
+        TextAsset xml = Resources.Load<TextAsset>(DatabasePath);
 
         StringReader reader = new StringReader(xml.text);
 

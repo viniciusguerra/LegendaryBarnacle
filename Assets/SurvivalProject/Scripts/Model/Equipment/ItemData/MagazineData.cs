@@ -45,7 +45,7 @@ public class MagazineData : ItemData<Magazine>
         StackData newAmmoLeft = null;
         int previousAmmoCount = CurrentAmmoCount;
 
-        if (!string.IsNullOrEmpty(CurrentAmmo.ammoName) && ammo.ammoName != CurrentAmmo.ammoName)
+        if (CurrentAmmo != null && !string.IsNullOrEmpty(CurrentAmmo.ammoName) && ammo.ammoName != CurrentAmmo.ammoName)
         {
             oldAmmoLeft = new StackData(CurrentAmmo, currentAmmoCount);
             previousAmmoCount = 0;

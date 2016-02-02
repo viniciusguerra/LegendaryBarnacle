@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityEditor;
 using System;
 
 [Serializable]
@@ -33,7 +32,7 @@ public class Firearm : Equipment
             if (value != null && value.caliber == firearmData.Caliber)
             {
                 firearmData.ChamberedAmmo = value;
-                chamberedAmmoPrefab = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(ChamberedAmmo.Database.PrefabsPath + ChamberedAmmo.prefabName + ".prefab"));
+                chamberedAmmoPrefab = Instantiate(Resources.Load<GameObject>(ChamberedAmmo.Database.PrefabsPath + ChamberedAmmo.prefabName));
                 chamberedAmmoPrefab.transform.position = chamberedAmmoTransform.position;
                 chamberedAmmoPrefab.transform.rotation = chamberedAmmoTransform.rotation;
                 chamberedAmmoPrefab.transform.parent = chamberedAmmoTransform;
@@ -245,8 +244,8 @@ public class Firearm : Equipment
         trailRenderer.enabled = false;
 
         if(ChamberedAmmo != null && chamberedAmmoPrefab == null)
-        {
-            chamberedAmmoPrefab = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(ChamberedAmmo.Database.PrefabsPath + ChamberedAmmo.prefabName + ".prefab"));
+        {            
+            chamberedAmmoPrefab = Instantiate(Resources.Load<GameObject>(ChamberedAmmo.Database.PrefabsPath + ChamberedAmmo.prefabName));
             chamberedAmmoPrefab.transform.position = chamberedAmmoTransform.position;
             chamberedAmmoPrefab.transform.rotation = chamberedAmmoTransform.rotation;
             chamberedAmmoPrefab.transform.parent = chamberedAmmoTransform;
