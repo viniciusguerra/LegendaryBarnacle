@@ -11,19 +11,29 @@ public class Firearm : Equipment
 
     public string Caliber { get { return firearmData.Caliber; } }
     public string FirearmType { get { return firearmData.FirearmType; } }
-    public MagazineData CurrentMagazine
+    public MagazineData CurrentMagazineData
     {
         get { return firearmData.CurrentMagazine; }
         set
         {
             if (value != null && value.Caliber == firearmData.Caliber)
             {
-                firearmData.CurrentMagazine = value;                
+                currentMagazine = Magazine.Create(value);
+                currentMagazine.transform.SetParent(transform, false);
+
+                firearmData.CurrentMagazine = value;
             }
             else
+            {
+                if (currentMagazine != null)
+                    Destroy(currentMagazine.gameObject);
+
                 firearmData.CurrentMagazine = null;
+            }
         }
-    }    
+    }
+    public Magazine currentMagazine;
+
     public AmmoData ChamberedAmmo
     {
         get { return firearmData.ChamberedAmmo; }
@@ -42,12 +52,13 @@ public class Firearm : Equipment
                 firearmData.ChamberedAmmo = null;
         }
     }
-
-    protected GameObject chamberedAmmoPrefab;
+        
     public bool safetyOn;
     public bool cocked;
     public bool slideBack;
 
+    [SerializeField]
+    protected GameObject chamberedAmmoPrefab;
     public Character wielder;
     public Transform barrelTipTransform;
     public Transform chamberedAmmoTransform;    
@@ -55,25 +66,29 @@ public class Firearm : Equipment
     protected RaycastHit rayHitInfo;
 
     [SerializeField]
-    protected Animator animator;
-    [SerializeField]
-    protected TrailRenderer trailRenderer;
+    protected Animator firearmAnimator;
+    protected readonly string a_trigger = "TriggerPull";
+    protected readonly string a_cock = "ToggleHammer";
+    protected readonly string a_safety = "ToggleSafety";
+    protected readonly string a_hasAmmo = "HasAmmoInChamber";
+    protected readonly string a_safetyOn = "SafetyOn";
+    protected readonly string a_slideBack = "SlideBack";
+    protected readonly string a_slideHalfBack = "SlideHalfBack";
 
-    protected string a_trigger = "TriggerPull";
-    protected string a_magRelease = "MagRelease";
-    protected string a_cock = "ToggleHammer";
-    protected string a_safety = "ToggleSafety";
-    protected string a_hasAmmo = "HasAmmoInChamber";
-    protected string a_safetyOn = "SafetyOn";
-    protected string a_slideBack = "SlideBack";
+    [SerializeField]
+    protected Animator magazineAnimator;
+    protected readonly string a_magazineRelease = "Release";
+
+    [SerializeField]
+    protected TrailRenderer trailRenderer;    
 
     public void ToggleSafety()
     {
         if (!slideBack)
         {
             safetyOn = !safetyOn;
-            animator.SetTrigger(a_safety);
-            animator.SetBool(a_safetyOn, safetyOn);
+            firearmAnimator.SetTrigger(a_safety);
+            firearmAnimator.SetBool(a_safetyOn, safetyOn);
         }
     }
 
@@ -110,7 +125,7 @@ public class Firearm : Equipment
         if(!safetyOn && !slideBack)
         {
             slideBack = true;
-            animator.SetBool(a_slideBack, slideBack);
+            firearmAnimator.SetBool(a_slideBack, slideBack);
 
             SetHammerCocked(true);
 
@@ -124,7 +139,7 @@ public class Firearm : Equipment
         if (slideBack)
         {
             slideBack = false;
-            animator.SetBool(a_slideBack, slideBack);
+            firearmAnimator.SetBool(a_slideBack, slideBack);
 
             LoadChamber();
         }
@@ -139,23 +154,28 @@ public class Firearm : Equipment
     {
         if (magazineData == null || magazineData.Caliber == firearmData.Caliber)
         {
-            MagazineData oldMagazine = CurrentMagazine;
+            MagazineData oldMagazine = CurrentMagazineData;
 
-            CurrentMagazine = magazineData;
+            CurrentMagazineData = magazineData;
+
+            if(magazineData != null)
+                magazineAnimator = currentMagazine.Animator;
 
             return oldMagazine;
         }
         else
+        {
             return magazineData;
+        }
     }
 
     private void LoadChamber()
     {
-        if (CurrentMagazine == null)
+        if (CurrentMagazineData == null)
             return;
             
-        ChamberedAmmo = CurrentMagazine.Feed();
-        animator.SetBool(a_hasAmmo, ChamberedAmmo == null ? false : true);
+        ChamberedAmmo = CurrentMagazineData.Feed();
+        firearmAnimator.SetBool(a_hasAmmo, ChamberedAmmo == null ? false : true);
     }
 
     public void SetHammerCocked(bool cocked)
@@ -163,7 +183,7 @@ public class Firearm : Equipment
         if (this.cocked != cocked)
         {
             this.cocked = cocked;
-            animator.SetTrigger(a_cock);
+            firearmAnimator.SetTrigger(a_cock);
         }
     }
 
@@ -177,7 +197,7 @@ public class Firearm : Equipment
                 {
                     if (ChamberedAmmo != null)
                     {
-                        animator.SetTrigger(a_trigger);
+                        firearmAnimator.SetTrigger(a_trigger);
                         Shoot();
                     }
                     else
@@ -233,7 +253,7 @@ public class Firearm : Equipment
 
         yield return new WaitForEndOfFrame();
 
-        if (CurrentMagazine != null && CurrentMagazine.CurrentAmmoCount > 0)
+        if (CurrentMagazineData != null && CurrentMagazineData.CurrentAmmoCount > 0)
             ReleaseSlide();
     }
 

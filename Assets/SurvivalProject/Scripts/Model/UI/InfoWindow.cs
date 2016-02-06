@@ -36,9 +36,15 @@ public class MagazineInfoUI
 
     public IEnumerator Update(MagazineData magazine, GameObject uiAmmoPrefab)
     {
-        BagItem bagItem = BagItem.CreateToggle(uiAmmoPrefab, ammoValueParent, magazine.CurrentAmmo);
+        if (magazine.CurrentAmmo != null)
+        {
+            ammoValueParent.gameObject.SetActive(true);
+            BagItem bagItem = BagItem.CreateToggle(uiAmmoPrefab, ammoValueParent, magazine.CurrentAmmo);
 
-        UIController.Instance.CharacterMenu.InfoWindow.ammoUiObject = bagItem.gameObject;
+            UIController.Instance.CharacterMenu.InfoWindow.ammoUiObject = bagItem.gameObject;
+        }
+        else
+            ammoValueParent.gameObject.SetActive(false);        
 
         while (UIController.Instance.CharacterMenu.InfoWindow.UpdateCoroutines)
         {

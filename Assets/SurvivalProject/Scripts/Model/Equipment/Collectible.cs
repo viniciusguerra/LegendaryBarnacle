@@ -16,7 +16,7 @@ public class Collectible : MonoBehaviour
         ItemContainer container;
 
         Type containerType = itemData.ContainerType.GetType();
-        gameObject.AddComponent(containerType);            
+        gameObject.AddComponent(containerType);
 
         if (amount > 1)
         {

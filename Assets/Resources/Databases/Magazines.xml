@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MagazineCollection>
+	<MagazineArray>
+		<Magazine Name=".45 Pistol Magazine">
+			<Caliber>.45</Caliber>
+      <Capacity>7</Capacity>
+      <Weight>0.3</Weight>
+			<Prefab>45PistolMagazine</Prefab>
+		</Magazine>
+    <Magazine Name=".45 Pistol Extended Magazine">
+      <Caliber>.45</Caliber>
+      <Capacity>9</Capacity>
+      <Weight>0.4</Weight>
+      <Prefab>45PistolMagazine</Prefab>
+    </Magazine>
+	</MagazineArray>
+</MagazineCollection>

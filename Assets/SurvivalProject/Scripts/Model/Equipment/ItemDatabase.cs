@@ -28,7 +28,7 @@ public abstract class ItemDatabase<T> : ItemDatabase where T : ItemData
 
         StringReader reader = new StringReader(xml.text);
 
-        XmlSerializer serializer = new XmlSerializer(typeof(AmmoDatabase));
+        XmlSerializer serializer = new XmlSerializer(GetType());
 
         ItemDatabase<T> database = serializer.Deserialize(reader) as ItemDatabase<T>;
 
@@ -98,6 +98,29 @@ public class AmmoDatabase : ItemDatabase<AmmoData>
 
     public override string DatabasePath { get { return Constants.AmmoDatabasePath; } }
     public override string PrefabsPath { get { return Constants.AmmoPrefabsPath; } }
+}
+
+[XmlRoot("MagazineCollection")]
+public class MagazineDatabase : ItemDatabase<MagazineData>
+{
+    protected List<MagazineData> magazineList;
+
+    [XmlArray("MagazineArray")]
+    [XmlArrayItem("Magazine")]
+    public override List<MagazineData> ItemList
+    {
+        get
+        {
+            return magazineList;
+        }
+        protected set
+        {
+            magazineList = value;
+        }
+    }
+
+    public override string DatabasePath { get { return Constants.MagazineDatabasePath; } }
+    public override string PrefabsPath { get { return Constants.MagazinePrefabsPath; } }
 }
 
 

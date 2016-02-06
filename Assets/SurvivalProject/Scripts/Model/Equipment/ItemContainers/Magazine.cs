@@ -14,8 +14,9 @@ public class Magazine : Equipment
 
     public override ItemData ItemData
     {
-        get { return magazineData; } protected set { magazineData = value as MagazineData; }
-    }   
+        get { return magazineData; }
+        protected set { magazineData = value as MagazineData; }
+    }
 
     public string Caliber { get { return magazineData.Caliber; } }
     public int Capacity { get { return magazineData.Capacity; } }
@@ -42,5 +43,23 @@ public class Magazine : Equipment
         {
             magazineData.CurrentAmmoCount = value;
         }
-    }    
+    }
+
+    [SerializeField]
+    private Animator animator;
+    public Animator Animator
+    {
+        get { return animator; }
+    }
+
+    public static Magazine Create(MagazineData magazineData)
+    {
+        MagazineDatabase database = magazineData.Database as MagazineDatabase;
+
+        string path = database.PrefabsPath + database.Find(x => x.ItemName == magazineData.ItemName).PrefabName;
+
+        GameObject magazineGameObject = Instantiate(Resources.Load<GameObject>(path));
+
+        return magazineGameObject.GetComponent<Magazine>();
+    }
 }

@@ -1,10 +1,27 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Xml;
+using System.Xml.Serialization;
 
 [Serializable]
 public class MagazineData : ItemData<Magazine>
 {
+    [XmlAttribute("Name")]
+    public string itemName;
+
+    [XmlElement("Capacity", typeof(int))]
+    public int capacity;
+
+    [XmlElement("Caliber")]
+    public string caliber;    
+
+    [XmlElement("Weight", typeof(float))]
+    public float itemWeight;
+
+    [XmlElement("Prefab")]
+    public string prefabName;
+
     [SerializeField]
     private AmmoData currentAmmo;
     public AmmoData CurrentAmmo
@@ -20,16 +37,12 @@ public class MagazineData : ItemData<Magazine>
         get { return currentAmmoCount; }
         set { currentAmmoCount = value; }
     }
-
-    [SerializeField]
-    private int capacity;
+    
     public int Capacity
     {
         get { return capacity; }
     }
-
-    [SerializeField]
-    private string caliber;
+    
     public string Caliber
     {
         get { return caliber; }
@@ -85,9 +98,7 @@ public class MagazineData : ItemData<Magazine>
         return ammoToReturn;
     }
 
-    #region ItemData
-    [SerializeField]
-    private string itemName;
+    #region ItemData    
     public override string ItemName
     {
         get
@@ -95,23 +106,24 @@ public class MagazineData : ItemData<Magazine>
             return itemName;
         }
     }
-
-    [SerializeField]
-    private float itemWeight;
+    
     public override float Weight
     {
         get
         {
             return itemWeight;
         }
-    }
+    }    
 
+    public string PrefabName { get { return prefabName; } }
+
+    [SerializeField]
+    private MagazineDatabase magazineDatabase = new MagazineDatabase();
     public override ItemDatabase Database
     {
         get
         {
-            //TODO: Create Magazine Database
-            throw new NotImplementedException();
+            return magazineDatabase;
         }
     }
     #endregion
