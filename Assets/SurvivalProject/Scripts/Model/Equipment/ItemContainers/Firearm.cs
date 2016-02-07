@@ -263,6 +263,11 @@ public class Firearm : Equipment
         trailRenderer.GetComponentInChildren<TrailRenderer>();
         trailRenderer.enabled = false;
 
+        if(!cocked)
+        {
+            SetHammerCocked(true);
+        }
+
         if(ChamberedAmmo != null && chamberedAmmoPrefab == null)
         {            
             chamberedAmmoPrefab = Instantiate(Resources.Load<GameObject>(ChamberedAmmo.Database.PrefabsPath + ChamberedAmmo.prefabName));
