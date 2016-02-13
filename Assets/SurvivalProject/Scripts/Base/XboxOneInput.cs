@@ -20,6 +20,8 @@ namespace Base
             return attributes.Length > 0 ? attributes[0].Description : string.Empty;
         }
     }
+
+    public delegate void ButtonHeld();
 }
 
 public enum XboxOneButton
@@ -66,11 +68,11 @@ public enum XboxOneAxis
     DPadY
 }
 
-public static class XboxOneInput
+public class XboxOneInput : Singleton<XboxOneInput>
 {
-    private static XboxOneAxis[] axisToFlip = { XboxOneAxis.LeftThumbY, XboxOneAxis.RightThumbY };
+    private static readonly XboxOneAxis[] axisToFlip = { XboxOneAxis.LeftThumbY, XboxOneAxis.RightThumbY };
 
-    public static bool GetButtonDown(XboxOneButton button)
+    public bool GetButtonDown(XboxOneButton button)
     {
         string playerPrefix = "p1_";
         string buttonName = playerPrefix + button.GetDescription();
@@ -78,7 +80,7 @@ public static class XboxOneInput
         return Input.GetButtonDown(buttonName);
     }
 
-    public static bool GetButtonUp(XboxOneButton button)
+    public bool GetButtonUp(XboxOneButton button)
     {
         string playerPrefix = "p1_";
         string buttonName = playerPrefix + button.GetDescription();
@@ -86,7 +88,7 @@ public static class XboxOneInput
         return Input.GetButtonUp(buttonName);
     }
 
-    public static bool GetButton(XboxOneButton button)
+    public bool GetButton(XboxOneButton button)
     {
         string playerPrefix = "p1_";
         string buttonName = playerPrefix + button.GetDescription();
@@ -94,34 +96,29 @@ public static class XboxOneInput
         return Input.GetButton(buttonName);
     }
 
-    public static void OnButtonHeld(XboxOneButton button, float time, Action successAction, Action failAction)
+    public void OnButtonHeld(XboxOneButton button, float time, ButtonHeld successAction, ButtonHeld failAction)
     {
-        SceneManager.Instance.StartCoroutine(ButtonHeldCoroutine(button, time, successAction, failAction));
+        StartCoroutine(ButtonHeldCoroutine(button, time, successAction, failAction));
     }
 
-    private static IEnumerator ButtonHeldCoroutine(XboxOneButton button, float time, Action successAction, Action failAction)
+    private IEnumerator ButtonHeldCoroutine(XboxOneButton button, float time, ButtonHeld successAction, ButtonHeld failAction)
     {
         bool success = true;
         float counter = 0;
 
-        if (!GetButton(button))
-            success = false;
-        else
+        do
         {
-            do
+            if (GetButtonUp(button))
             {
-                if (GetButtonUp(button))
-                {
-                    success = false;
-                    break;
-                }
-                else
-                    counter += Time.deltaTime;
+                success = false;
+                break;
+            }
+            else
+                counter += Time.deltaTime;
 
-                yield return null;
+            yield return null;
 
-            } while (counter < time);
-        }
+        } while (counter < time);        
 
         if (success)
         {
@@ -134,43 +131,43 @@ public static class XboxOneInput
         }
     }
 
-    public static float GetAxis(XboxOneAxis axis)
+    public float GetAxis(XboxOneAxis axis)
     {
         string playerPrefix = "p1_";
         string buttonName = playerPrefix + axis.GetDescription();
 
-        return Input.GetAxis(buttonName) * (System.Array.Exists(axisToFlip, x => x == axis) ? -1 : 1);
+        return Input.GetAxis(buttonName) * (Array.Exists(axisToFlip, x => x == axis) ? -1 : 1);
     }
 
-    public static bool GetButtonDown(XboxOneButton button, int player)
-    {
-        string playerPrefix = "p" + player + "_";
-        string buttonName = playerPrefix + button.GetDescription();
+    //public bool GetButtonDown(XboxOneButton button, int player)
+    //{
+    //    string playerPrefix = "p" + player + "_";
+    //    string buttonName = playerPrefix + button.GetDescription();
 
-        return Input.GetButtonDown(buttonName);
-    }
+    //    return Input.GetButtonDown(buttonName);
+    //}
 
-    public static bool GetButtonUp(XboxOneButton button, int player)
-    {
-        string playerPrefix = "p" + player + "_";
-        string buttonName = playerPrefix + button.GetDescription();
+    //public bool GetButtonUp(XboxOneButton button, int player)
+    //{
+    //    string playerPrefix = "p" + player + "_";
+    //    string buttonName = playerPrefix + button.GetDescription();
 
-        return Input.GetButtonUp(buttonName);
-    }
+    //    return Input.GetButtonUp(buttonName);
+    //}
 
-    public static bool GetButton(XboxOneButton button, int player)
-    {
-        string playerPrefix = "p" + player + "_";
-        string buttonName = playerPrefix + button.GetDescription();
+    //public bool GetButton(XboxOneButton button, int player)
+    //{
+    //    string playerPrefix = "p" + player + "_";
+    //    string buttonName = playerPrefix + button.GetDescription();
 
-        return Input.GetButton(buttonName);
-    }
+    //    return Input.GetButton(buttonName);
+    //}
 
-    public static float GetAxis(XboxOneAxis axis, int player)
-    {
-        string playerPrefix = "p" + player + "_";
-        string buttonName = playerPrefix + axis.GetDescription();
+    //public float GetAxis(XboxOneAxis axis, int player)
+    //{
+    //    string playerPrefix = "p" + player + "_";
+    //    string buttonName = playerPrefix + axis.GetDescription();
 
-        return Input.GetAxis(buttonName);
-    }
+    //    return Input.GetAxis(buttonName);
+    //}
 }

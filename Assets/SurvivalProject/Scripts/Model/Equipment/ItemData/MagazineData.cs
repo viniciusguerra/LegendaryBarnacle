@@ -126,5 +126,10 @@ public class MagazineData : ItemData<Magazine>
             return magazineDatabase;
         }
     }
+
+    public Magazine CreateMagazine()
+    {
+        return Magazine.CreateMagazine(this);
+    }
     #endregion
 }

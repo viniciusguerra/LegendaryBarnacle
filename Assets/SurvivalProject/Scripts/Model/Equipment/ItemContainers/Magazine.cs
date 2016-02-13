@@ -10,6 +10,7 @@ public class Magazine : Equipment
     public MagazineData MagazineData
     {
         get { return magazineData; }
+        set { magazineData = value; }
     }
 
     public override ItemData ItemData
@@ -50,16 +51,45 @@ public class Magazine : Equipment
     public Animator Animator
     {
         get { return animator; }
-    }
+    }   
 
-    public static Magazine Create(MagazineData magazineData)
+    public static Magazine CreateMagazine(MagazineData data)
     {
-        MagazineDatabase database = magazineData.Database as MagazineDatabase;
+        MagazineDatabase database = data.Database as MagazineDatabase;
 
-        string path = database.PrefabsPath + database.Find(x => x.ItemName == magazineData.ItemName).PrefabName;
+        string path = database.PrefabsPath + data.PrefabName;
 
         GameObject magazineGameObject = Instantiate(Resources.Load<GameObject>(path));
 
-        return magazineGameObject.GetComponent<Magazine>();
+        Magazine magazine = magazineGameObject.GetComponent<Magazine>();
+
+        magazine.magazineData = data;
+
+        return magazine;
+    }
+
+    private void UpdateBulletRenderers()
+    {
+        for (int i = 1; i <= magazineData.capacity; i++)
+        {
+            bool isBulletVisible = i <= CurrentAmmoCount;
+            transform.FindChild("Bullet" + i).GetComponent<MeshRenderer>().enabled = isBulletVisible ? true : false;
+        }
+    }
+
+    public AmmoData Feed()
+    {
+        AmmoData ammo = MagazineData.Feed();
+        UpdateBulletRenderers();
+
+        return ammo;
+    }
+
+    public StackData[] Load(AmmoData ammo, int amount)
+    {
+        StackData[] stack = MagazineData.Load(ammo, amount);
+        UpdateBulletRenderers();
+
+        return stack;
     }
 }

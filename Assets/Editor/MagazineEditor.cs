@@ -279,7 +279,7 @@ public class MagazineDrawer : PropertyDrawer
     {
         float height;
 
-        if (hasValues)
+        if (FindMagazineDataInTargetProperty(property) != null)
             height = 176;
         else
             height = 64;

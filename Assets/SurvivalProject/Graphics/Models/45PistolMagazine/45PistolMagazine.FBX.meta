@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 45ee56a5a2ea9724fa7010fa4a286384
-timeCreated: 1454730379
+guid: 6de31e11b21f6794e9d7b71c5f63f1a3
+timeCreated: 1455400040
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
@@ -13,6 +13,7 @@ ModelImporter:
     100010: Bullet5
     100012: Bullet6
     100014: Bullet7
+    100016: Magazine
     400000: //RootNode
     400002: Bullet1
     400004: Bullet2
@@ -21,30 +22,34 @@ ModelImporter:
     400010: Bullet5
     400012: Bullet6
     400014: Bullet7
-    2300000: //RootNode
-    2300002: Bullet1
-    2300004: Bullet2
-    2300006: Bullet3
-    2300008: Bullet4
-    2300010: Bullet5
-    2300012: Bullet6
-    2300014: Bullet7
-    3300000: //RootNode
-    3300002: Bullet1
-    3300004: Bullet2
-    3300006: Bullet3
-    3300008: Bullet4
-    3300010: Bullet5
-    3300012: Bullet6
-    3300014: Bullet7
-    4300000: Magazine
+    400016: Magazine
+    2300000: Bullet1
+    2300002: Bullet2
+    2300004: Bullet3
+    2300006: Bullet4
+    2300008: Bullet5
+    2300010: Bullet6
+    2300012: Bullet7
+    2300014: Magazine
+    3300000: Bullet1
+    3300002: Bullet2
+    3300004: Bullet3
+    3300006: Bullet4
+    3300008: Bullet5
+    3300010: Bullet6
+    3300012: Bullet7
+    3300014: Magazine
+    4300000: Bullet5
     4300002: Bullet1
-    4300004: Bullet7
-    4300006: Bullet2
-    4300008: Bullet3
-    4300010: Bullet6
-    4300012: Bullet4
-    4300014: Bullet5
+    4300004: Bullet3
+    4300006: Bullet4
+    4300008: Bullet7
+    4300010: Magazine
+    4300012: Bullet2
+    4300014: Bullet6
+    7400000: Release
+    7400002: Load
+    9500000: //RootNode
   materials:
     importMaterials: 1
     materialName: 0
@@ -59,17 +64,109 @@ ModelImporter:
     animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
-    animationCompression: 1
+    animationCompression: 0
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Release
+      takeName: Take 001
+      firstFrame: 0
+      lastFrame: 12
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Bullet1
+        weight: 1
+      - path: Bullet2
+        weight: 1
+      - path: Bullet3
+        weight: 1
+      - path: Bullet4
+        weight: 1
+      - path: Bullet5
+        weight: 1
+      - path: Bullet6
+        weight: 1
+      - path: Bullet7
+        weight: 1
+      - path: Magazine
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Load
+      takeName: Take 001
+      firstFrame: 12
+      lastFrame: 24
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Bullet1
+        weight: 1
+      - path: Bullet2
+        weight: 1
+      - path: Bullet3
+        weight: 1
+      - path: Bullet4
+        weight: 1
+      - path: Bullet5
+        weight: 1
+      - path: Bullet6
+        weight: 1
+      - path: Bullet7
+        weight: 1
+      - path: Magazine
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 0.0254
     meshCompression: 0
     addColliders: 0
     importBlendShapes: 1
@@ -103,7 +200,7 @@ ModelImporter:
     rootMotionBoneName: 
     hasTranslationDoF: 0
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 0
+  animationType: 2
   humanoidOversampling: 1
   additionalBone: 0
   userData: 

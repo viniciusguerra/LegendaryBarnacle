@@ -22,7 +22,7 @@ public class Crosshair : MonoBehaviour
 
         iTween.FadeTo(gameObject, 1, fadeTime);
 
-        if (XboxOneInput.GetAxis(XboxOneAxis.RightThumbX) != 0 || XboxOneInput.GetAxis(XboxOneAxis.RightThumbY) != 0)
+        if (XboxOneInput.Instance.GetAxis(XboxOneAxis.RightThumbX) != 0 || XboxOneInput.Instance.GetAxis(XboxOneAxis.RightThumbY) != 0)
             StartCoroutine(CheckForRelease());
         else
             showing = true;
@@ -40,7 +40,7 @@ public class Crosshair : MonoBehaviour
 
     public void Control()
     {        
-        Vector3 inputDirection = new Vector3(XboxOneInput.GetAxis(XboxOneAxis.RightThumbX), 0, XboxOneInput.GetAxis(XboxOneAxis.RightThumbY));
+        Vector3 inputDirection = new Vector3(XboxOneInput.Instance.GetAxis(XboxOneAxis.RightThumbX), 0, XboxOneInput.Instance.GetAxis(XboxOneAxis.RightThumbY));
         inputDirection *= movementSpeed;
         inputDirection *= Time.deltaTime;
 
@@ -52,7 +52,7 @@ public class Crosshair : MonoBehaviour
 
     private IEnumerator CheckForRelease()
     {
-        while (XboxOneInput.GetAxis(XboxOneAxis.RightThumbX) != 0 || XboxOneInput.GetAxis(XboxOneAxis.RightThumbY) != 0)
+        while (XboxOneInput.Instance.GetAxis(XboxOneAxis.RightThumbX) != 0 || XboxOneInput.Instance.GetAxis(XboxOneAxis.RightThumbY) != 0)
             yield return null;
 
         showing = true;

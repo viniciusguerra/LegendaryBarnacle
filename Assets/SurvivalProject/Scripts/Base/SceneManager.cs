@@ -27,9 +27,11 @@ public class SceneManager : Singleton<SceneManager>
 
     public void SetWeaponCameraTransform(Transform targetTransform, bool instant)
     {
-        iTween.Stop(weaponCamera.gameObject);
+        iTween.Stop(weaponCamera.gameObject);        
 
-        iTween.MoveTo(weaponCamera.gameObject, iTween.Hash("position", targetTransform.localPosition, "time", instant ? 0 : weaponCameraTranslateTime, "islocal", true));
-        iTween.RotateTo(weaponCamera.gameObject, iTween.Hash("rotation", targetTransform.localRotation.eulerAngles, "time", instant ? 0 : weaponCameraTranslateTime, "islocal", true));
+        Vector3 localPosition = weaponCamera.transform.parent.InverseTransformPoint(targetTransform.position);
+
+        iTween.MoveTo(weaponCamera.gameObject, iTween.Hash("position", localPosition, "time", instant ? 0 : weaponCameraTranslateTime, "islocal", true, "easetype", iTween.EaseType.easeOutQuad));
+        iTween.RotateTo(weaponCamera.gameObject, iTween.Hash("rotation", targetTransform, "time", instant ? 0 : weaponCameraTranslateTime, "easetype", iTween.EaseType.easeOutQuad));
     }
 }

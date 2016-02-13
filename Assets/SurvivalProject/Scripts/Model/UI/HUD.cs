@@ -11,7 +11,7 @@ public class HUD : MonoBehaviour
         get { return reloadMenu; }
     }
 
-    public UIWindow weaponCamera;    
+    public UIWindow weaponCamera;
 
     public void ToggleWeaponCamera()
     {
