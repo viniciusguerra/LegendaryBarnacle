@@ -45,6 +45,7 @@ public class Crosshair : MonoBehaviour
         inputDirection *= Time.deltaTime;
 
         playerRelativePosition += inputDirection;
+        playerRelativePosition.y = character.Character.EquippedHolster.EquippedFirearm.barrelTipTransform.position.y;
 
         transform.position = playerRelativePosition;
     }

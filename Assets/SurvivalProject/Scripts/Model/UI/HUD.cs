@@ -11,42 +11,23 @@ public class HUD : MonoBehaviour
         get { return reloadMenu; }
     }
 
-    public RawImage weaponCamera;
-    public float weaponCameraFadeTime = 1f;
-    private bool weaponCameraVisible = false;
+    public UIWindow weaponCamera;    
 
     public void ToggleWeaponCamera()
     {
-        weaponCameraVisible = !weaponCameraVisible;
-
-        Color color = weaponCamera.color;
-        Color newColor = color;
-        newColor.a = weaponCameraVisible ? 1 : 0;
-
-        iTween.ValueTo(gameObject, iTween.Hash("from", color, "to", newColor, "time", weaponCameraFadeTime, "onupdate", "UpdateWeaponCameraAlpha"));
+        weaponCamera.Toggle();
     }
 
-    public void SetWeaponCamera(bool visible)
+    public void SetWeaponCameraVisibility(bool visible)
     {
-        weaponCameraVisible = visible;
-
-        Color color = weaponCamera.color;
-        Color newColor = color;
-        newColor.a = weaponCameraVisible ? 1 : 0;
-
-        iTween.ValueTo(gameObject, iTween.Hash("from", color, "to", newColor, "time", weaponCameraFadeTime, "onupdate", "UpdateWeaponCameraAlpha"));
-    }
-
-    private void UpdateWeaponCameraAlpha(Color value)
-    {
-        weaponCamera.color = value;
+        if (visible)
+            weaponCamera.Show();
+        else
+            weaponCamera.Hide();
     }
 
     void Start()
     {
-        //Hiding Weapon Camera
-        Color color = weaponCamera.color;
-        color.a = 0;
-        weaponCamera.color = color;
+
     }
 }

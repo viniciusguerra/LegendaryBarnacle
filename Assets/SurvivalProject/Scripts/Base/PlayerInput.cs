@@ -20,6 +20,9 @@ public class PlayerInput : CharacterInput
     protected bool drawing;
 
     [SerializeField]
+    private float slidePullButtonHoldTime = 0.1f;
+
+    [SerializeField]
     private Transform weaponCameraOperationTransform;
     [SerializeField]
     private Transform weaponCameraChamberTransform;
@@ -66,7 +69,7 @@ public class PlayerInput : CharacterInput
             {
                 if (character.WieldedFirearm != null)
                 {
-                    UIController.Instance.HUD.SetWeaponCamera(true);
+                    UIController.Instance.HUD.SetWeaponCameraVisibility(true);
                     operationEnabled = true;
 
                     drawing = false;
@@ -78,7 +81,7 @@ public class PlayerInput : CharacterInput
         {
             if (enabledCrosshair)
             {
-                UIController.Instance.HUD.SetWeaponCamera(false);
+                UIController.Instance.HUD.SetWeaponCameraVisibility(false);
                 operationEnabled = false;
                 crosshair.Hide();
                 SetMovementState(MovementState.Running);                
@@ -142,11 +145,9 @@ public class PlayerInput : CharacterInput
 
             //pull slide
             //will release ammo from chamber if loaded
+            //TODO: Fix slide release not working
             if (XboxOneInput.GetButtonDown(XboxOneButton.Y))
-            {
-                //SceneManager.Instance.SetWeaponCameraTransform(weaponCameraChamberTransform, false);
-                Character.WieldedFirearm.PullSlide();                
-            }
+                XboxOneInput.OnButtonHeld(XboxOneButton.Y, slidePullButtonHoldTime, () => Character.WieldedFirearm.FullSlideToggle(), null );
 
             //release slide
             //will load chamber if magazine is loaded

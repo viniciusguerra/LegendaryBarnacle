@@ -2,6 +2,7 @@
 using System.Collections;
 using System.ComponentModel;
 using Base;
+using System;
 
 namespace Base
 {    
@@ -91,6 +92,46 @@ public static class XboxOneInput
         string buttonName = playerPrefix + button.GetDescription();
 
         return Input.GetButton(buttonName);
+    }
+
+    public static void OnButtonHeld(XboxOneButton button, float time, Action successAction, Action failAction)
+    {
+        SceneManager.Instance.StartCoroutine(ButtonHeldCoroutine(button, time, successAction, failAction));
+    }
+
+    private static IEnumerator ButtonHeldCoroutine(XboxOneButton button, float time, Action successAction, Action failAction)
+    {
+        bool success = true;
+        float counter = 0;
+
+        if (!GetButton(button))
+            success = false;
+        else
+        {
+            do
+            {
+                if (GetButtonUp(button))
+                {
+                    success = false;
+                    break;
+                }
+                else
+                    counter += Time.deltaTime;
+
+                yield return null;
+
+            } while (counter < time);
+        }
+
+        if (success)
+        {
+            successAction.Invoke();
+        }
+        else
+        {
+            if(failAction != null)
+                failAction.Invoke();
+        }
     }
 
     public static float GetAxis(XboxOneAxis axis)

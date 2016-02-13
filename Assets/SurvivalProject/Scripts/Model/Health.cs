@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
-public delegate void HealthEnded();
-
+[Serializable]
 public class Health : MonoBehaviour
 {
-    public event HealthEnded OnHealthEnd;
+    public event DamageReceived OnHealthEnded;
+    public event DamageReceived OnTookDamage;
 
     [SerializeField]
     private float currentHP;
@@ -32,18 +33,20 @@ public class Health : MonoBehaviour
         get { return totalDefense; }
         set { totalDefense = value; }
     }
-    public void Damage(AmmoData ammo)
+    public void ApplyDamage(AmmoData ammo, Transform origin)
     {
-        float damageValue = ammo.damage;
-        float damageReduction = totalDefense - ammo.penetration;
+        Damage damage = new Damage(this, ammo, origin);
 
-        damageValue -= damageReduction;
-
-        Damage(damageValue);
+        ApplyDamage(damage);        
     }
 
-    private void Damage(float value)
+    private void ApplyDamage(Damage damage)
     {
-        currentHP = Mathf.Max(0, currentHP - value);
+        currentHP = Mathf.Max(0, currentHP - damage.Value);
+
+        if (currentHP == 0)
+            OnHealthEnded(damage);
+        else
+            OnTookDamage(damage);
     }    
 }

@@ -2,6 +2,8 @@
 using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
+using System;
+using System.Reflection;
 
 [CustomPropertyDrawer(typeof(MagazineData))]
 public class MagazineDrawer : PropertyDrawer
@@ -13,8 +15,17 @@ public class MagazineDrawer : PropertyDrawer
     bool load = false;
     bool empty = false;
 
+    bool hasValues;
+
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
+        MagazineData valueCheck = FindMagazineDataInTargetProperty(property);
+
+        if (valueCheck == null || string.IsNullOrEmpty(valueCheck.itemName))
+            hasValues = false;
+        else
+            hasValues = true;
+
         // Using BeginProperty / EndProperty on the parent property means that
         // prefab override logic works on the entire property.
         EditorGUI.BeginProperty(position, label, property);
@@ -72,12 +83,13 @@ public class MagazineDrawer : PropertyDrawer
 
         MagazineDatabase magDatabase = new MagazineDatabase();
         MagazineData[] magTypesFromDatabase = magDatabase.Load().ToArray();
-        string[] magNamesFromDatabase = new string[magTypesFromDatabase.Length + 1];
+        string[] magNamesFromDatabase = new string[magTypesFromDatabase.Length + 2];
         magNamesFromDatabase[0] = "No Change";
+        magNamesFromDatabase[1] = "Null";
 
-        for (int i = 1; i < magTypesFromDatabase.Length + 1; i++)
+        for (int i = 2; i < magTypesFromDatabase.Length + 2; i++)
         {
-            magNamesFromDatabase[i] = magTypesFromDatabase[i - 1].ItemName;
+            magNamesFromDatabase[i] = magTypesFromDatabase[i - 2].ItemName;
         }
 
         AmmoDatabase ammoDatabase = new AmmoDatabase();
@@ -90,7 +102,13 @@ public class MagazineDrawer : PropertyDrawer
             ammoNamesFromDatabase[i] = ammoTypesFromDatabase[i - 1].ammoName;
         }
 
-        setValues = EditorGUI.ToggleLeft(setButtonRect, "Set Values", setValues);
+        if (!hasValues)
+        {
+            setButtonRect.y = magCapacityLabelRect.y;
+            magazinePopupRect.y = setButtonRect.y;
+        }
+
+        setValues = EditorGUI.ToggleLeft(setButtonRect, "Set Magazine", setValues);        
         
         if (setValues)
         {
@@ -103,71 +121,91 @@ public class MagazineDrawer : PropertyDrawer
             if (newIndex != selectedMagazineIndex && newIndex != 0)
             {
                 //set current property values to selected database item
-                property.FindPropertyRelative("itemName").stringValue = magTypesFromDatabase[newIndex - 1].ItemName;
-                property.FindPropertyRelative("capacity").intValue = magTypesFromDatabase[newIndex - 1].Capacity;
-                property.FindPropertyRelative("caliber").stringValue = magTypesFromDatabase[newIndex - 1].Caliber;
-                property.FindPropertyRelative("itemWeight").floatValue = magTypesFromDatabase[newIndex - 1].Weight;
-                property.FindPropertyRelative("prefabName").stringValue = magTypesFromDatabase[newIndex - 1].PrefabName;                
+                MagazineData value = newIndex == 1 ? null : magTypesFromDatabase[newIndex - 2];
+
+                SetMagazineDataInTargetProperty(property, value);
+
+                setValues = false;            
             }
 
             selectedMagazineIndex = 0;
         }
 
-        load = EditorGUI.ToggleLeft(loadButtonRect, "Load", load);
-
-        if (load)
+        if (hasValues)
         {
-            setValues = false;
-            empty = false;
+            load = EditorGUI.ToggleLeft(loadButtonRect, "Load", load);
 
-            //draw database selection popup
-            int newIndex = EditorGUI.Popup(ammoPopupRect, selectedAmmoIndex, ammoNamesFromDatabase);
-
-            if (newIndex != selectedAmmoIndex && newIndex != 0)
+            if (load)
             {
-                MagazineData targetMagData = fieldInfo.GetValue(property.serializedObject.targetObject) as MagazineData;
-                targetMagData.CurrentAmmo = ammoTypesFromDatabase[newIndex - 1];
+                setValues = false;
+                empty = false;
 
-                property.FindPropertyRelative("currentAmmoCount").intValue = property.FindPropertyRelative("capacity").intValue;
+                MagazineData targetMagData = FindMagazineDataInTargetProperty(property);
+
+                //draw database selection popup
+                int newIndex = EditorGUI.Popup(ammoPopupRect, selectedAmmoIndex, ammoNamesFromDatabase);
+
+                if (newIndex != selectedAmmoIndex && newIndex != 0)
+                {
+                    targetMagData.CurrentAmmo = ammoTypesFromDatabase[newIndex - 1];
+                    targetMagData.CurrentAmmoCount = targetMagData.Capacity;
+
+                    load = false;
+                }
+
+                selectedAmmoIndex = 0;
             }
 
-            selectedAmmoIndex = 0;
+            empty = EditorGUI.ToggleLeft(emptyButtonRect, "Clear Ammo", empty);
+
+            if (empty)
+            {
+                empty = false;
+                setValues = false;
+                load = false;
+
+                //((MagazineData)fieldInfo.GetValue(property.serializedObject.targetObject)).CurrentAmmo = null;
+                //property.FindPropertyRelative("currentAmmoCount").intValue = 0;
+
+                MagazineData targetMagData = FindMagazineDataInTargetProperty(property);
+
+                //Debug.Log(targetMagData == null ? "MagazineData not found" : targetMagData.itemName + " found!");
+
+                targetMagData.CurrentAmmo = null;
+                targetMagData.CurrentAmmoCount = 0;
+            }
         }
 
-        empty = EditorGUI.ToggleLeft(emptyButtonRect, "Empty", empty);
-
-        if (empty)
+        if (hasValues)
         {
-            setValues = false;
-            load = false;
+            //draw information        
+            EditorGUI.LabelField(magNameLabelRect, "Magazine Name");
+            EditorGUI.LabelField(magNameValueRect, property.FindPropertyRelative("itemName").stringValue, EditorStyles.boldLabel);
 
-            ((MagazineData)fieldInfo.GetValue(property.serializedObject.targetObject)).CurrentAmmo = null;
-            property.FindPropertyRelative("currentAmmoCount").intValue = 0;
+            string ammoName = property.FindPropertyRelative("currentAmmo") != null && !string.IsNullOrEmpty(property.FindPropertyRelative("currentAmmo").FindPropertyRelative("ammoName").stringValue) ?
+                property.FindPropertyRelative("currentAmmo").FindPropertyRelative("ammoName").stringValue :
+                "No Ammo";
+
+            EditorGUI.LabelField(magCurrentAmmoNameLabelRect, "Current Ammo");
+            EditorGUI.LabelField(magCurrentAmmoNameValueRect, ammoName, EditorStyles.boldLabel);
+
+            EditorGUI.LabelField(magCapacityLabelRect, "Capacity");
+            EditorGUI.LabelField(magCapacityValueRect, property.FindPropertyRelative("currentAmmoCount").intValue.ToString() + '/' + property.FindPropertyRelative("capacity").intValue.ToString(), EditorStyles.boldLabel);
+
+            EditorGUI.LabelField(magCaliberLabelRect, "Caliber");
+            EditorGUI.LabelField(magCaliberValueRect, property.FindPropertyRelative("caliber").stringValue, EditorStyles.boldLabel);
+
+            EditorGUI.LabelField(magWeightLabelRect, "Weight");
+            EditorGUI.LabelField(magWeightValueRect, property.FindPropertyRelative("itemWeight").floatValue.ToString(), EditorStyles.boldLabel);
+
+            string ammoPrefabsPath = magDatabase.PrefabsPath;
+            EditorGUI.LabelField(magPrefabLabelRect, "Prefab");
+            EditorGUI.LabelField(magPrefabValueRect, ammoPrefabsPath + property.FindPropertyRelative("prefabName").stringValue, EditorStyles.boldLabel);
         }
-
-        //draw information        
-        EditorGUI.LabelField(magNameLabelRect, "Magazine Name");
-        EditorGUI.LabelField(magNameValueRect, property.FindPropertyRelative("itemName").stringValue, EditorStyles.boldLabel);
-
-        string ammoName = property.FindPropertyRelative("currentAmmo") != null && !string.IsNullOrEmpty(property.FindPropertyRelative("currentAmmo").FindPropertyRelative("ammoName").stringValue) ?
-            property.FindPropertyRelative("currentAmmo").FindPropertyRelative("ammoName").stringValue :
-            "No Ammo";
-
-        EditorGUI.LabelField(magCurrentAmmoNameLabelRect, "Current Ammo");
-        EditorGUI.LabelField(magCurrentAmmoNameValueRect, ammoName, EditorStyles.boldLabel);
-
-        EditorGUI.LabelField(magCapacityLabelRect, "Capacity");
-        EditorGUI.LabelField(magCapacityValueRect, property.FindPropertyRelative("currentAmmoCount").intValue.ToString() + '/' + property.FindPropertyRelative("capacity").intValue.ToString(), EditorStyles.boldLabel);
-
-        EditorGUI.LabelField(magCaliberLabelRect, "Caliber");
-        EditorGUI.LabelField(magCaliberValueRect, property.FindPropertyRelative("caliber").stringValue, EditorStyles.boldLabel);
-
-        EditorGUI.LabelField(magWeightLabelRect, "Weight");
-        EditorGUI.LabelField(magWeightValueRect, property.FindPropertyRelative("itemWeight").floatValue.ToString(), EditorStyles.boldLabel);
-
-        string ammoPrefabsPath = magDatabase.PrefabsPath;
-        EditorGUI.LabelField(magPrefabLabelRect, "Prefab");
-        EditorGUI.LabelField(magPrefabValueRect, ammoPrefabsPath + property.FindPropertyRelative("prefabName").stringValue, EditorStyles.boldLabel);
+        else
+        {
+            EditorGUI.LabelField(magNameLabelRect, "Magazine is null");
+        }
 
         // Set indent back to what it was
         EditorGUI.indentLevel = initialIndent;
@@ -175,12 +213,76 @@ public class MagazineDrawer : PropertyDrawer
         EditorGUI.EndProperty();
     }
 
+    //TODO: get the actual magazine value from array
+    private static MagazineData FindMagazineDataInTargetProperty(SerializedProperty property)
+    {
+        MagazineData targetMagData = null;
+
+        PropertyInfo[] objectProperties = property.serializedObject.targetObject.GetType().GetProperties();
+
+        foreach (PropertyInfo info in objectProperties)
+        {
+            if (info.PropertyType.Equals(typeof(MagazineData)))
+            {
+                targetMagData = info.GetValue(property.serializedObject.targetObject, null) as MagazineData;
+            }
+            else
+            {
+                if (info.PropertyType.Equals(typeof(ItemData)))
+                {
+                    PropertyInfo[] dataProperties = info.GetType().GetProperties();
+
+                    PropertyInfo containerProperty = Array.Find(dataProperties, x => x.PropertyType.Equals(typeof(MagazineData)));
+
+                    if (containerProperty != null)
+                    {
+                        object containedMagData = info.GetValue(property.serializedObject.targetObject, null);
+
+                        if (containedMagData != null)
+                            targetMagData = containedMagData as MagazineData;
+                    }
+                }
+            }
+        }
+
+        return targetMagData;
+    }
+
+    private static void SetMagazineDataInTargetProperty(SerializedProperty property, MagazineData value)
+    {
+        PropertyInfo[] objectProperties = property.serializedObject.targetObject.GetType().GetProperties();
+
+        foreach (PropertyInfo info in objectProperties)
+        {
+            if (info.PropertyType.Equals(typeof(MagazineData)))
+            {
+                info.SetValue(property.serializedObject.targetObject, value, null);
+            }
+            else
+            {
+                if (info.PropertyType.Equals(typeof(ItemData)))
+                {
+                    PropertyInfo[] dataProperties = info.GetType().GetProperties();
+
+                    PropertyInfo containerProperty = Array.Find(dataProperties, x => x.PropertyType.Equals(typeof(MagazineData)));
+
+                    if (containerProperty != null)
+                    {
+                        containerProperty.SetValue(property.serializedObject.targetObject, value, null);                        
+                    }
+                }
+            }
+        }
+    }
+
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
     {
-        float height = 176;
+        float height;
 
-        //if (property.objectReferenceValue == null)
-        //    height = 40;
+        if (hasValues)
+            height = 176;
+        else
+            height = 64;
 
         return height;
     }
