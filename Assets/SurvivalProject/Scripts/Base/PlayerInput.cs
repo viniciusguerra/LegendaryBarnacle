@@ -147,7 +147,7 @@ public class PlayerInput : CharacterInput
             //will release ammo from chamber if loaded
             //TODO: Fix slide release not working
             if (XboxOneInput.GetButtonDown(XboxOneButton.Y))
-                XboxOneInput.OnButtonHeld(XboxOneButton.Y, slidePullButtonHoldTime, () => Character.WieldedFirearm.FullSlideToggle(), null );
+                XboxOneInput.OnButtonHeld(XboxOneButton.Y, slidePullButtonHoldTime, () => Character.WieldedFirearm.FullSlidePull(), null );
 
             //release slide
             //will load chamber if magazine is loaded

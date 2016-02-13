@@ -43,6 +43,9 @@ public class Breakable : MonoBehaviour
         yield return new WaitForSeconds(shakeTime);
 
         rigidbody.velocity = Vector3.zero;
+
+        yield return new WaitForEndOfFrame();
+
         rigidbody.isKinematic = true;
     }
 

@@ -148,6 +148,8 @@ public class Firearm : Equipment
         if(!safetyOn && !slideBack)
         {
             slideBack = true;
+            slideHalfBack = false;
+            firearmAnimator.SetBool(a_slideHalfBack, slideHalfBack);
             firearmAnimator.SetBool(a_slideBack, slideBack);
 
             SetHammerCocked(true);
