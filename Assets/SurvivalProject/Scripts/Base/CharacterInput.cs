@@ -1,17 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(CustomCharacterController))]
 public class CharacterInput : MonoBehaviour
 {
-    protected Character character;
-    public Character Character { get { return character; } }
+    protected CustomCharacterController characterController;  
+    public CustomCharacterController CharacterController { get { return characterController; } }
+    public Character Character { get { return characterController.Character; } }
 
-    public float walkSpeed;
-    public float averageSpeed;
-    public float currentSpeed;
-    public float maxDegreesDelta = 300;
-
-    protected CharacterController characterController;   
+    //public float walkSpeed;
+    //public float averageSpeed;
+    //public float currentSpeed;
+    //public float maxDegreesDelta = 300;
 
     //used for calculating movement direction
     protected Vector3 lastPosition;
@@ -20,38 +20,47 @@ public class CharacterInput : MonoBehaviour
     protected float stickRotationThreshold = 0.05f;
     protected float movementLookThreshold = 0.05f;
 
-    protected void Move(Vector3 movementDirection)
+    protected void MoveTurning(Vector3 movementDirection)
     {
-        characterController.Move(movementDirection);
+        characterController.MoveTurning(movementDirection);
     }
 
-    protected void Aim(Quaternion targetRotation)
+    protected void MoveStrafing(Vector3 movementDirection)
     {
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, maxDegreesDelta * Time.deltaTime);
+        characterController.MoveStrafing(movementDirection);
     }
 
-    protected void SetMovementState(MovementState state)
+    protected void TriggerAiming()
     {
-        switch (state)
-        {
-            case MovementState.Walking:
-                {
-                    currentSpeed = walkSpeed;
-                    break;
-                }
-            case MovementState.Running:
-                {
-                    currentSpeed = averageSpeed;
-                    break;
-                }
-            default:
-                break;
-        }
-    }    
+        characterController.DrawWeapon();
+    }
+
+    //protected void Aim(Quaternion targetRotation)
+    //{
+    //    transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, maxDegreesDelta * Time.deltaTime);
+    //}
+
+    //protected void SetMovementState(MovementState state)
+    //{
+    //    switch (state)
+    //    {
+    //        case MovementState.Walking:
+    //            {
+    //                currentSpeed = walkSpeed;
+    //                break;
+    //            }
+    //        case MovementState.Running:
+    //            {
+    //                currentSpeed = averageSpeed;
+    //                break;
+    //            }
+    //        default:
+    //            break;
+    //    }
+    //}
 
     protected virtual void Start()
     {
-        characterController = GetComponent<CharacterController>();
-        character = GetComponent<Character>();     
+        characterController = GetComponent<CustomCharacterController>();
     }    
 }

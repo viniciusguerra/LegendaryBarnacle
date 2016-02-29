@@ -1,15 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class SetAiming : StateMachineBehaviour
+public class SetDrawing : StateMachineBehaviour
 {
-    public bool aiming;
+    public bool drawing;
+    public bool holstering;
 
-    // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        animator.SetBool(CustomCharacterController.a_aiming, aiming);
-        animator.ResetTrigger(CustomCharacterController.a_aimingTrigger);
+        if(drawing)
+            animator.SetBool(CustomCharacterController.a_drawing, true);
+
+        if (holstering)
+        {
+            animator.SetBool(CustomCharacterController.a_holstering, true);
+            SceneManager.Instance.MainCamera.CameraMode = CustomCameraMode.ThirdPerson;
+        }
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -17,10 +23,17 @@ public class SetAiming : StateMachineBehaviour
     //
     //}
 
-    // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
-    //override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-    //
-    //}
+    override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        if (drawing)
+        {
+            animator.SetBool(CustomCharacterController.a_drawing, false);
+            SceneManager.Instance.MainCamera.CameraMode = CustomCameraMode.FirstPerson;
+        }
+
+        if (holstering)
+            animator.SetBool(CustomCharacterController.a_holstering, false);
+    }
 
     // OnStateMove is called right after Animator.OnAnimatorMove(). Code that processes and affects root motion should be implemented here
     //override public void OnStateMove(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {

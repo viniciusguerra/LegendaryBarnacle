@@ -52,9 +52,9 @@ public class Character : MonoBehaviour
     }
     #endregion
 
-    [SerializeField]
-    private CharacterInput characterInput;
-    public CharacterInput CharacterInput { get { return characterInput; } }
+    //[SerializeField]
+    //private CharacterInput characterInput;
+    //public CharacterInput CharacterInput { get { return characterInput; } }
 
     public void Equip(Equipment equipment)
     {

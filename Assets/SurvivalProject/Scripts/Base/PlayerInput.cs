@@ -7,38 +7,70 @@ public enum MovementState
     Running
 }
 
-[RequireComponent(typeof(CharacterController))]
+//[RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(CustomCharacterController))]
 public class PlayerInput : CharacterInput
 {
     [SerializeField]
-    protected Crosshair crosshair;
-    public Crosshair Crosshair { get { return crosshair; } }
+    private float horizontalInputLerpStep = 0.1f;
+    [SerializeField]
+    private float forwardInputLerpStep = 0.1f;
 
-    protected bool enabledCrosshair;
+    [SerializeField]
+    private new CustomCamera camera;
+    private Vector3 cameraForward;             // The current forward direction of the camera
+    private Vector3 movementInput;
+    float horizontalInput, forwardInput;
+
     protected bool operationEnabled;
     protected bool holdingTrigger;
-    protected bool drawing;
     protected bool weaponCameraAtChamberTransform;
     protected bool weaponCameraAtMagazineTransform;
 
     [SerializeField]
-    private float buttonHoldTime = 0.1f;
+    private float buttonHoldTime = 0.2f;
 
-    [SerializeField]
-    private LootArea lootArea;
+    //[SerializeField]
+    //private LootArea lootArea;
 
     protected void HandleMovement()
     {
-        lastPosition = transform.position;
+        //lastPosition = transform.position;
 
-        float horizontalMovementAxis = XboxOneInput.Instance.GetAxis(XboxOneAxis.LeftThumbX);
-        float verticalMovementAxis = XboxOneInput.Instance.GetAxis(XboxOneAxis.LeftThumbY);
-        bool hasMovementInput = horizontalMovementAxis != 0 || verticalMovementAxis != 0;
+        //float horizontalMovementAxis = XboxOneInput.Instance.GetAxis(XboxOneAxis.LeftThumbX);
+        //float verticalMovementAxis = XboxOneInput.Instance.GetAxis(XboxOneAxis.LeftThumbY);
+        //bool hasMovementInput = horizontalMovementAxis != 0 || verticalMovementAxis != 0;
 
-        Vector3 movementDirection = new Vector3(horizontalMovementAxis, 0, verticalMovementAxis) * currentSpeed * Time.deltaTime;
+        //Vector3 movementDirection = new Vector3(horizontalMovementAxis, 0, verticalMovementAxis) * currentSpeed * Time.deltaTime;
 
-        if (hasMovementInput)
-            Move(movementDirection);
+        //if (hasMovementInput)
+        //    Move(movementDirection);
+
+        // read inputs
+        horizontalInput = Mathf.Lerp(XboxOneInput.Instance.GetAxis(XboxOneAxis.LeftThumbX), horizontalInput, horizontalInputLerpStep);
+        forwardInput = Mathf.Lerp(XboxOneInput.Instance.GetAxis(XboxOneAxis.LeftThumbY), forwardInput, forwardInputLerpStep);
+
+        // calculate move direction to pass to character
+        if (camera != null)
+        {
+            // calculate camera relative direction to move:
+            cameraForward = Vector3.Scale(camera.transform.forward, new Vector3(1, 0, 1)).normalized;
+            movementInput = forwardInput * cameraForward + horizontalInput * camera.transform.right;
+        }
+        else
+        {
+            // we use world-relative directions in the case of no main camera
+            movementInput = forwardInput * Vector3.forward + horizontalInput * Vector3.right;
+        }
+        // pass all parameters to the character control script
+        if (CharacterController.IsAiming)
+        {
+            MoveStrafing(movementInput);
+        }
+        else
+        {
+            MoveTurning(movementInput);
+        }
     }
 
     protected void HandleAim()
@@ -46,83 +78,84 @@ public class PlayerInput : CharacterInput
         if (XboxOneInput.Instance.GetAxis(XboxOneAxis.LT) > 0)
         {
             //start drawing
-            if (!drawing && !enabledCrosshair)
+            if (!characterController.IsDrawing && !characterController.IsAiming)
             {
-                character.DrawFromHolster();
-
-                drawing = true;
-            }
-
-            //enable crosshair when drawing
-            if (!enabledCrosshair)
-            {
-                crosshair.Show();
-                SetMovementState(MovementState.Walking);
-
-                enabledCrosshair = true;
+                HandleDrawing();
             }
 
             //activates operation and weapon camera
-            if (drawing)
+            if (characterController.IsAiming)
             {
-                if (character.WieldedFirearm != null)
+                if (Character.WieldedFirearm != null)
                 {
-                    UIController.Instance.HUD.SetWeaponCameraVisibility(true);
+                    //UIController.Instance.HUD.SetWeaponCameraVisibility(true);
                     operationEnabled = true;
-
-                    drawing = false;
                 }
             }
         }
 
         if (XboxOneInput.Instance.GetAxis(XboxOneAxis.LT) == 0)
         {
-            if (enabledCrosshair)
+            if (characterController.IsAiming && !CharacterController.IsHolstering)
             {
-                UIController.Instance.HUD.SetWeaponCameraVisibility(false);
                 operationEnabled = false;
-                crosshair.Hide();
-                SetMovementState(MovementState.Running);
-                character.HolsterFirearm();
-                drawing = false;
+                HandleHolstering();
 
-                enabledCrosshair = false;
+                //UIController.Instance.HUD.SetWeaponCameraVisibility(false);                
+                //crosshair.Hide();
+                //SetMovementState(MovementState.Running);                
+                //drawing = false;
+                //enabledCrosshair = false;
             }
-        }
+        }        
 
-        if (enabledCrosshair)
+        if (characterController.IsAiming)
         {
+            //First Person Aiming Controls            
+
             //looks towards crosshair
-            Vector3 lookDirection = new Vector3(crosshair.transform.position.x, transform.position.y, crosshair.transform.position.z);
-            transform.LookAt(lookDirection);
+            //Vector3 lookDirection = new Vector3(crosshair.transform.position.x, transform.position.y, crosshair.transform.position.z);
+            //transform.LookAt(lookDirection);
         }
         else
         {
-            float horizontalRotationAxis = XboxOneInput.Instance.GetAxis(XboxOneAxis.RightThumbX);
-            float verticalRotationAxis = XboxOneInput.Instance.GetAxis(XboxOneAxis.RightThumbY);
-            bool hasAimingInput = horizontalRotationAxis != 0 || verticalRotationAxis != 0;
+            //Third Person Camera Controls            
 
-            if (hasAimingInput && (Mathf.Abs(horizontalRotationAxis) > stickRotationThreshold || Mathf.Abs(verticalRotationAxis) > stickRotationThreshold))
-            {
-                SetMovementState(MovementState.Walking);
+            //float horizontalRotationAxis = XboxOneInput.Instance.GetAxis(XboxOneAxis.RightThumbX);
+            //float verticalRotationAxis = XboxOneInput.Instance.GetAxis(XboxOneAxis.RightThumbY);
+            //bool hasAimingInput = horizontalRotationAxis != 0 || verticalRotationAxis != 0;
 
-                //rotates with right stick input
-                targetRotation = Quaternion.LookRotation(new Vector3(horizontalRotationAxis, 0, verticalRotationAxis));
+            //if (hasAimingInput && (Mathf.Abs(horizontalRotationAxis) > stickRotationThreshold || Mathf.Abs(verticalRotationAxis) > stickRotationThreshold))
+            //{
+            //    //SetMovementState(MovementState.Walking);
 
-                Vector3 cameraOffset = new Vector3(horizontalRotationAxis, 0, verticalRotationAxis);
-                SceneManager.Instance.MainCamera.SetOffset(cameraOffset);
-            }
-            else
-            {
-                SetMovementState(MovementState.Running);
+            //    //rotates with right stick input
+            //    targetRotation = Quaternion.LookRotation(new Vector3(horizontalRotationAxis, 0, verticalRotationAxis));
 
-                //looks towards movement if it is significant enough
-                if ((lastPosition - transform.position).magnitude > movementLookThreshold)
-                    targetRotation = Quaternion.LookRotation(transform.position - lastPosition, Vector3.up);
-            }
+            //    //Vector3 cameraOffset = new Vector3(horizontalRotationAxis, 0, verticalRotationAxis);
+            //    //SceneManager.Instance.MainCamera.SetOffset(cameraOffset);
+            //}
+            //else
+            //{
+            //    //SetMovementState(MovementState.Running);
 
-            Aim(targetRotation);
+            //    //looks towards movement if it is significant enough
+            //    if ((lastPosition - transform.position).magnitude > movementLookThreshold)
+            //        targetRotation = Quaternion.LookRotation(transform.position - lastPosition, Vector3.up);
+            //}
+
+            //Aim(targetRotation);
         }
+    }
+
+    protected void HandleDrawing()
+    {
+        characterController.DrawWeapon();
+    }
+
+    protected void HandleHolstering()
+    {
+        characterController.HolsterWeapon();
     }
 
     protected void HandleOperation()
@@ -145,32 +178,34 @@ public class PlayerInput : CharacterInput
             //will release ammo from chamber if loaded
             //TODO: Fix slide release not working
             if (XboxOneInput.Instance.GetButtonDown(XboxOneButton.Y))
-                XboxOneInput.Instance.OnButtonHeld(XboxOneButton.Y, buttonHoldTime, Character.WieldedFirearm.FullSlidePull, Character.WieldedFirearm.HalfSlideToggle);
+            {
+                XboxOneInput.Instance.OnButtonHeld(XboxOneButton.Y, buttonHoldTime, Character.WieldedFirearm.HalfSlideToggle, Character.WieldedFirearm.FullSlidePull);
+            }
 
             //Set Weapon Camera to check slide
-            if (weaponCameraAtChamberTransform == false && Character.WieldedFirearm.SlideHalfBack)
-            {
-                SceneManager.Instance.SetWeaponCameraTransform(Character.WieldedFirearm.ChamberTransform, false);
-                weaponCameraAtMagazineTransform = false;
-                weaponCameraAtChamberTransform = true;
-            }
+            //if (weaponCameraAtChamberTransform == false && Character.WieldedFirearm.SlideHalfBack)
+            //{
+            //    SceneManager.Instance.SetWeaponCameraTransform(Character.WieldedFirearm.ChamberTransform, false);
+            //    weaponCameraAtMagazineTransform = false;
+            //    weaponCameraAtChamberTransform = true;
+            //}
 
             //release slide
             //will load chamber if magazine is loaded
-            if (XboxOneInput.Instance.GetButtonUp(XboxOneButton.Y) && Character.WieldedFirearm.SlideFullBack)
+            if (XboxOneInput.Instance.GetButtonUp(XboxOneButton.Y))
             {
                 //SceneManager.Instance.SetWeaponCameraTransform(weaponCameraOperationTransform, false);
                 Character.WieldedFirearm.ReleaseSlide();
             }
 
             //Set Weapon Camera back if slide is released
-            if (weaponCameraAtChamberTransform == true && (!Character.WieldedFirearm.SlideHalfBack && !Character.WieldedFirearm.SlideFullBack))
-            {
-                SceneManager.Instance.SetWeaponCameraTransform(Character.WieldedFirearm.OperationTransform, false);
-                weaponCameraAtChamberTransform = false;
-            }
+            //if (weaponCameraAtChamberTransform == true && (!Character.WieldedFirearm.SlideHalfBack && !Character.WieldedFirearm.SlideFullBack))
+            //{
+            //    SceneManager.Instance.SetWeaponCameraTransform(Character.WieldedFirearm.OperationTransform, false);
+            //    weaponCameraAtChamberTransform = false;
+            //}
 
-            if (enabledCrosshair)
+            if (characterController.IsAiming)
             {
                 //shoots when pressing RT
                 if (XboxOneInput.Instance.GetAxis(XboxOneAxis.RT) > 0)
@@ -223,24 +258,27 @@ public class PlayerInput : CharacterInput
 
     public void HandleCharacterUnarmedInput()
     {
-        if (!operationEnabled && !enabledCrosshair)
-        {
-            if (XboxOneInput.Instance.GetButtonDown(XboxOneButton.Y))
-                lootArea.CycleItems();
+        //loot area controls
+        //if (!operationEnabled && !characterController.IsAiming)
+        //{
+        //    if (XboxOneInput.Instance.GetButtonDown(XboxOneButton.Y))
+        //        lootArea.CycleItems();
 
-            if (XboxOneInput.Instance.GetButtonDown(XboxOneButton.A))
-                lootArea.StoreSelectedItem();
-        }
+        //    if (XboxOneInput.Instance.GetButtonDown(XboxOneButton.A))
+        //        lootArea.StoreSelectedItem();
+        //}
     }
 
     protected override void Start()
     {
         base.Start();
 
-        enabledCrosshair = false;
-        drawing = false;
+        //enabledCrosshair = false;
+        //drawing = false;
         weaponCameraAtChamberTransform = false;
         weaponCameraAtMagazineTransform = false;
+
+        characterController = GetComponent<CustomCharacterController>();
     }
 
     void Update()
