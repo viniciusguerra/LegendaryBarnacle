@@ -22,7 +22,6 @@ public class EquipmentWindow : UIWindow
     [SerializeField]
     private Toggle clothingToggle;
 
-    //For test, is being called by toggles when they are clicked
     public void DisplayInformation(int equip)
     {
         if (toggleGroup.AnyTogglesOn())

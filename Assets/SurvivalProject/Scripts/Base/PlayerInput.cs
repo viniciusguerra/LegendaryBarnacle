@@ -75,87 +75,45 @@ public class PlayerInput : CharacterInput
 
     protected void HandleAim()
     {
-        if (XboxOneInput.Instance.GetAxis(XboxOneAxis.LT) > 0)
+        //toggle aiming
+        if (XboxOneInput.Instance.GetButton(XboxOneButton.LB))
         {
-            //start drawing
-            if (!characterController.IsDrawing && !characterController.IsAiming)
-            {
-                HandleDrawing();
-            }
-
-            //activates operation and weapon camera
+            //holster weapon
             if (characterController.IsAiming)
             {
-                if (Character.WieldedFirearm != null)
+                if (characterController.IsAiming && !CharacterController.IsHolstering)
                 {
-                    //UIController.Instance.HUD.SetWeaponCameraVisibility(true);
-                    operationEnabled = true;
+                    operationEnabled = false;
+
+                    characterController.HolsterWeapon();
                 }
+            }
+            else
+            {
+                //start drawing
+                if (!characterController.IsDrawing && !characterController.IsAiming)
+                {
+                    characterController.DrawWeapon();                    
+                }  
             }
         }
 
-        if (XboxOneInput.Instance.GetAxis(XboxOneAxis.LT) == 0)
-        {
-            if (characterController.IsAiming && !CharacterController.IsHolstering)
-            {
-                operationEnabled = false;
-                HandleHolstering();
-
-                //UIController.Instance.HUD.SetWeaponCameraVisibility(false);                
-                //crosshair.Hide();
-                //SetMovementState(MovementState.Running);                
-                //drawing = false;
-                //enabledCrosshair = false;
-            }
-        }        
+        if(characterController.IsDrawing && Character.WieldedFirearm != null)
+            operationEnabled = true;
 
         if (characterController.IsAiming)
         {
-            //First Person Aiming Controls            
+            var horizontalInput = XboxOneInput.Instance.GetAxis(XboxOneAxis.RightThumbX);
+            var verticalInput = XboxOneInput.Instance.GetAxis(XboxOneAxis.RightThumbY);
 
-            //looks towards crosshair
-            //Vector3 lookDirection = new Vector3(crosshair.transform.position.x, transform.position.y, crosshair.transform.position.z);
-            //transform.LookAt(lookDirection);
+            float targetHorizontalAngle = horizontalInput;
+            float targetVerticalAngle = verticalInput;
+
+            // Rotate the rig (the root object) around Y axis only:
+            Quaternion targetWeaponRotation = Quaternion.Euler(-targetVerticalAngle, targetHorizontalAngle, 0f);
+
+            characterController.SetAimRotation(targetWeaponRotation);            
         }
-        else
-        {
-            //Third Person Camera Controls            
-
-            //float horizontalRotationAxis = XboxOneInput.Instance.GetAxis(XboxOneAxis.RightThumbX);
-            //float verticalRotationAxis = XboxOneInput.Instance.GetAxis(XboxOneAxis.RightThumbY);
-            //bool hasAimingInput = horizontalRotationAxis != 0 || verticalRotationAxis != 0;
-
-            //if (hasAimingInput && (Mathf.Abs(horizontalRotationAxis) > stickRotationThreshold || Mathf.Abs(verticalRotationAxis) > stickRotationThreshold))
-            //{
-            //    //SetMovementState(MovementState.Walking);
-
-            //    //rotates with right stick input
-            //    targetRotation = Quaternion.LookRotation(new Vector3(horizontalRotationAxis, 0, verticalRotationAxis));
-
-            //    //Vector3 cameraOffset = new Vector3(horizontalRotationAxis, 0, verticalRotationAxis);
-            //    //SceneManager.Instance.MainCamera.SetOffset(cameraOffset);
-            //}
-            //else
-            //{
-            //    //SetMovementState(MovementState.Running);
-
-            //    //looks towards movement if it is significant enough
-            //    if ((lastPosition - transform.position).magnitude > movementLookThreshold)
-            //        targetRotation = Quaternion.LookRotation(transform.position - lastPosition, Vector3.up);
-            //}
-
-            //Aim(targetRotation);
-        }
-    }
-
-    protected void HandleDrawing()
-    {
-        characterController.DrawWeapon();
-    }
-
-    protected void HandleHolstering()
-    {
-        characterController.HolsterWeapon();
     }
 
     protected void HandleOperation()

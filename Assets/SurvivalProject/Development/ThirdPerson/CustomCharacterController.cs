@@ -42,6 +42,7 @@ public class CustomCharacterController : MonoBehaviour
     float m_StrafeAmount;
     float m_ForwardDampAmount;
     Vector3 m_GroundNormal;
+    Quaternion m_AimRotation;
     //float m_CapsuleHeight;
     //Vector3 m_CapsuleCenter;
     //CapsuleCollider m_Capsule;
@@ -152,6 +153,11 @@ public class CustomCharacterController : MonoBehaviour
         UpdateAnimator(input, true);
     }
 
+    public void SetAimRotation(Quaternion rotation)
+    {
+        m_AimRotation.eulerAngles += rotation.eulerAngles;
+    }
+
     public void DrawWeapon()
     {
         float drawMultiplier = drawAnimationClip.length / character.EquippedHolster.DrawTime;
@@ -249,6 +255,42 @@ public class CustomCharacterController : MonoBehaviour
         //m_OrigGroundCheckDistance = m_GroundCheckDistance;
 
         character = GetComponent<Character>();
+    }
+
+    void OnAnimatorIK()
+    {
+        if(m_Animator)
+        {
+            if (IsAiming)
+            {
+                //m_Animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, 1);
+                //m_Animator.SetIKRotationWeight(AvatarIKGoal.RightHand, 1);
+
+                //hands
+                //Quaternion leftHandTargetRotation = m_Animator.GetIKRotation(AvatarIKGoal.LeftHand);
+                //leftHandTargetRotation.eulerAngles += m_AimRotation.eulerAngles;
+                //m_Animator.SetIKRotation(AvatarIKGoal.LeftHand, leftHandTargetRotation);
+
+                //Quaternion rightHandTargetRotation = m_Animator.GetIKRotation(AvatarIKGoal.RightHand);
+                //rightHandTargetRotation.eulerAngles += m_AimRotation.eulerAngles;
+                //m_Animator.SetIKRotation(AvatarIKGoal.RightHand, rightHandTargetRotation);       
+
+                //shoulders
+                //Quaternion leftShoulderRotation = m_Animator.GetBoneTransform(HumanBodyBones.LeftShoulder).rotation;
+                //leftShoulderRotation.eulerAngles += m_AimRotation.eulerAngles;
+                //Quaternion rightShoulderRotation = m_Animator.GetBoneTransform(HumanBodyBones.RightShoulder).rotation;
+                //rightShoulderRotation.eulerAngles += m_AimRotation.eulerAngles;
+
+                //m_Animator.SetBoneLocalRotation(HumanBodyBones.LeftShoulder, leftShoulderRotation);
+                //m_Animator.SetBoneLocalRotation(HumanBodyBones.RightShoulder, rightShoulderRotation);
+
+                Quaternion chestRotation = m_Animator.GetBoneTransform(HumanBodyBones.Chest).rotation;
+                chestRotation.eulerAngles += m_AimRotation.eulerAngles;
+                //chestRotation.eulerAngles = new Vector3(Mathf.Clamp(chestRotation.eulerAngles.x, -60, 60), Mathf.Clamp(chestRotation.eulerAngles.y, -60, 60), chestRotation.eulerAngles.z);
+
+                m_Animator.SetBoneLocalRotation(HumanBodyBones.Chest, chestRotation);
+            }            
+        }
     }
 
     //public void OnAnimatorMove()
