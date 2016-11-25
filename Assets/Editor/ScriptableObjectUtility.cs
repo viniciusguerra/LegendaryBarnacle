@@ -33,4 +33,13 @@ namespace Base
             Selection.activeObject = asset;
         }
     }
+
+    public class AmmoScriptableObjectDatabaseCreator : Editor
+    {
+        [MenuItem("Assets/Create/Database/Ammo")]
+        public static void CreateAsset()
+        {
+            ScriptableObjectUtility.CreateAsset<AmmoScriptableObjectDatabase>();
+        }
+    }
 }

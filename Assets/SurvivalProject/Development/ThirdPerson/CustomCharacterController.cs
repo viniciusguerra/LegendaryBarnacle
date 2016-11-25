@@ -286,9 +286,17 @@ public class CustomCharacterController : MonoBehaviour
 
                 Quaternion chestRotation = m_Animator.GetBoneTransform(HumanBodyBones.Chest).rotation;
                 chestRotation.eulerAngles += m_AimRotation.eulerAngles;
+                //Quaternion leftShoulderRotation = m_Animator.GetBoneTransform(HumanBodyBones.LeftShoulder).rotation;
+                //leftShoulderRotation.eulerAngles += new Vector3(m_AimRotation.eulerAngles.x, 0, 0);
+                //Quaternion rightShoulderRotation = m_Animator.GetBoneTransform(HumanBodyBones.RightShoulder).rotation;
+                //rightShoulderRotation.eulerAngles += new Vector3(m_AimRotation.eulerAngles.x, 0, 0);
                 //chestRotation.eulerAngles = new Vector3(Mathf.Clamp(chestRotation.eulerAngles.x, -60, 60), Mathf.Clamp(chestRotation.eulerAngles.y, -60, 60), chestRotation.eulerAngles.z);
 
                 m_Animator.SetBoneLocalRotation(HumanBodyBones.Chest, chestRotation);
+                //m_Animator.SetBoneLocalRotation(HumanBodyBones.LeftShoulder, leftShoulderRotation);
+                //m_Animator.SetBoneLocalRotation(HumanBodyBones.RightShoulder, rightShoulderRotation);
+
+                m_Animator.SetLookAtPosition(Character.WieldedFirearm.transform.FindChild("FrontSightTransform").position);
             }            
         }
     }
